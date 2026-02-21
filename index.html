@@ -38,7 +38,6 @@
         .choices-title { font-size: 12px; color: #00ccff; margin-bottom: 10px; }
         .choice-btn { display: block; width: 100%; padding: 12px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #fff; text-align: left; cursor: pointer; margin-bottom: 8px; transition: all 0.3s; }
         .choice-btn:hover { background: rgba(0,255,136,0.1); border-color: #00ff88; transform: translateX(5px); }
-        .choice-btn .effect { font-size: 10px; color: #00ff88; margin-top: 5px; }
         .result-box { background: rgba(0,255,136,0.1); border: 1px solid #00ff88; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
         .result-title { color: #00ff88; font-size: 14px; margin-bottom: 10px; }
         .result-text { font-size: 13px; line-height: 1.6; }
@@ -92,19 +91,16 @@
                     <div id="choicesList"></div>
                     <div class="free-input">
                         <input type="text" id="freeInput" placeholder="💬 输入你的想法，AI会生成个性化选择...">
-                        <button onclick="window.submitFreeChoice()">提交</button>
+                        <button id="submitBtn">提交</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <script>
-        const gameState = {
-            age: 0, health: 100, money: 0, intelligence: 50, charm: 50, luck: 50, fame: 0,
-            skills: [], events: [], job: "婴儿", relationship: 0, careerLevel: 0, history: []
-        };
+        var gameState = { age: 0, health: 100, money: 0, intelligence: 50, charm: 50, luck: 50, fame: 0, skills: [], events: [], job: "婴儿", relationship: 0, careerLevel: 0, history: [] };
 
-        const events = {
+        var events = {
             0: { npc: "妈妈", scene: "🏥", avatar: "👩", dialogue: "宝贝，欢迎来到这个世界！", choices: [
                 { text: "健康成长", effect: { health: 10 }, result: "你健康成长着。" },
                 { text: "哭闹表达", effect: { charm: 5 }, result: "你用哭闹来表达需求。" },
@@ -148,8 +144,8 @@
                 { text: "去旅行，寻找人生意义", effect: { charm: 10, money: -3000, skill: "旅行经验" }, result: "你踏上了旅途。" }
             ]},
             21: { npc: "学长", scene: "🏫", avatar: "👨‍🎓", dialogue: "兄弟，有个机会！", choices: [
-                { text: "参加创业比赛", condition: () => gameState.intelligence > 55, effect: { fame: 20, money: 5000 }, result: "项目获奖了！" },
-                { text: "去公司实习", condition: () => gameState.skills.includes('工作经验'), effect: { money: 2000, skill: "实习经验", career: 1 }, result: "实习表现不错。" },
+                { text: "参加创业比赛", condition: function() { return gameState.intelligence > 55; }, effect: { fame: 20, money: 5000 }, result: "项目获奖了！" },
+                { text: "去公司实习", condition: function() { return gameState.skills.indexOf('工作经验') !== -1; }, effect: { money: 2000, skill: "实习经验", career: 1 }, result: "实习表现不错。" },
                 { text: "加入社团", effect: { charm: 10, skill: "社交" }, result: "你认识了很多新朋友。" },
                 { text: "专注学习", effect: { intelligence: 5 }, result: "成绩提高了。" }
             ]},
@@ -160,14 +156,14 @@
                 { text: "建立人脉", effect: { charm: 10, fame: 10 }, result: "你认识了很多人。" }
             ]},
             27: { npc: "朋友", scene: "🎉", avatar: "👫", dialogue: "有个人想介绍给你认识。", choices: [
-                { text: "接受表白", condition: () => gameState.relationship > 30, effect: { relationship: 50, charm: 10 }, result: "你们在一起了！" },
+                { text: "接受表白", condition: function() { return gameState.relationship > 30; }, effect: { relationship: 50, charm: 10 }, result: "你们在一起了！" },
                 { text: "专注事业", effect: { money: 10000, career: 2 }, result: "你专注于事业。" },
                 { text: "学习新技能", effect: { intelligence: 10, skill: "新技能" }, result: "你学会了新技能。" },
                 { text: "拓展社交", effect: { charm: 15, fame: 10 }, result: "社交圈越来越大了。" }
             ]},
             30: { npc: "配偶", scene: "🏠", avatar: "💑", dialogue: "我们结婚吧！", choices: [
-                { text: "结婚", condition: () => gameState.relationship > 50, effect: { relationship: 50, health: 10, money: -20000 }, result: "你们举行了婚礼！" },
-                { text: "求婚", condition: () => gameState.relationship > 30, effect: { relationship: 40, money: -10000 }, result: "求婚成功！" },
+                { text: "结婚", condition: function() { return gameState.relationship > 50; }, effect: { relationship: 50, health: 10, money: -20000 }, result: "你们举行了婚礼！" },
+                { text: "求婚", condition: function() { return gameState.relationship > 30; }, effect: { relationship: 40, money: -10000 }, result: "求婚成功！" },
                 { text: "专注事业", effect: { career: 3, money: 30000 }, result: "事业蒸蒸日上！" },
                 { text: "学习进修", effect: { intelligence: 20, skill: "专业认证" }, result: "获得了专业认证！" }
             ]},
@@ -179,7 +175,7 @@
             ]},
             40: { npc: "同事", scene: "🏢", avatar: "👔", dialogue: "公司要裁员了...", choices: [
                 { text: "坚守岗位", effect: { career: 2, fame: 10 }, result: "你留在了公司。" },
-                { text: "主动离职创业", condition: () => gameState.money > 30000, effect: { money: -30000, job: "创业者", fame: 20 }, result: "你决定自己创业！" },
+                { text: "主动离职创业", condition: function() { return gameState.money > 30000; }, effect: { money: -30000, job: "创业者", fame: 20 }, result: "你决定自己创业！" },
                 { text: "学习新技能", effect: { intelligence: 15, skill: "新技能" }, result: "你学会了新技能。" },
                 { text: "休息一段时间", effect: { health: 20 }, result: "你好好休息了。" }
             ]},
@@ -197,63 +193,39 @@
             ]}
         };
 
-        function generateDefaultEvent(age) {
+        function getDefaultEvent(age) {
+            var npcs = ["朋友", "同事", "家人"];
+            var scenes = ["🏢", "🏠", "🌳"];
+            var npc = npcs[age % 3];
             return {
-                npc: ["朋友", "同事", "家人"][age % 3], scene: ["🏢", "🏠", "🌳"][age % 3], avatar: "👤",
-                dialogue: `今年你${age}岁了...`,
+                npc: npc,
+                scene: scenes[age % 3],
+                avatar: "👤",
+                dialogue: "今年你" + age + "岁了，生活中遇到了一个新的选择...",
                 choices: [
-                    { text: "努力工作", effect: { money: 10000, career: 1, health: -5 }, result: "收入增加了。" },
-                    { text: "陪伴家人", effect: { health: 10, relationship: 10 }, result: "和家人在一起很幸福。" },
+                    { text: "努力工作", effect: { money: 10000, career: 1, health: -5 }, result: "你努力工作，收入增加了。" },
+                    { text: "陪伴家人", effect: { health: 10, relationship: 10 }, result: "你和家人在一起的时光很幸福。" },
                     { text: "投资理财", effect: { money: Math.floor(Math.random() * 20000 - 5000), skill: "投资" }, result: "投资收益有盈亏。" },
-                    { text: "学习新知识", effect: { intelligence: 10, skill: "新技能" }, result: "学会了新技能！" }
+                    { text: "学习新知识", effect: { intelligence: 10, skill: "新技能" }, result: "你学会了新技能！" }
                 ]
             };
         }
 
-        function generateAIChoice(input) {
-            const l = input.toLowerCase();
-            let effect = {}, result = "";
-            if (l.includes("工作") || l.includes("上班")) { effect = { money: 5000 + gameState.careerLevel * 1000, career: 1 }; result = "你找到了工作。"; }
-            else if (l.includes("学习") || l.includes("读书")) { effect = { intelligence: 10, money: -2000 }; result = "你努力学习。"; }
-            else if (l.includes("创业")) { effect = { money: 10000, fame: 10 }; result = "你开始创业。"; }
-            else if (l.includes("旅行")) { effect = { charm: 10, money: -5000, health: 5 }; result = "你出去旅行了！"; }
-            else if (l.includes("健身") || l.includes("运动")) { effect = { health: 15 }; result = "你锻炼身体！"; }
-            else if (l.includes("社交") || l.includes("认识")) { effect = { charm: 10, fame: 5 }; result = "认识了新朋友。"; }
-            else if (l.includes("投资") || l.includes("理财")) { const g = Math.floor(Math.random() * 20000); effect = { money: g }; result = g > 0 ? `赚了${g}元！` : "有亏损。"; }
-            else { effect = { money: 2000, health: 5 }; result = "度过了充实的一年。"; }
-            return [{ text: input, effect: effect, result: result }];
+        function getCurrentEvent() {
+            var evt = events[gameState.age];
+            return evt || getDefaultEvent(gameState.age);
         }
 
-        function updateUI() {
-            document.getElementById('yearDisplay').textContent = '🎂 第 ' + gameState.age + ' 年';
-            document.getElementById('health').textContent = gameState.health;
-            document.getElementById('money').textContent = '¥' + gameState.money.toLocaleString();
-            document.getElementById('intelligence').textContent = gameState.intelligence;
-            document.getElementById('charm').textContent = gameState.charm;
-            document.getElementById('luck').textContent = gameState.luck;
-            document.getElementById('fame').textContent = gameState.fame;
-            document.getElementById('healthBar').style.width = Math.min(100, gameState.health) + '%';
-            document.getElementById('intBar').style.width = Math.min(100, gameState.intelligence) + '%';
-            document.getElementById('charmBar').style.width = Math.min(100, gameState.charm) + '%';
-            document.getElementById('luckBar').style.width = Math.min(100, gameState.luck) + '%';
-            const avatars = ["👶","👶","👶","👧","👧","👧","👦","👦","👦","🧑","🧑","🧑","👱","👱","👱","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨"];
-            const names = ["婴儿","婴儿","婴儿","幼儿","幼儿","幼儿","儿童","儿童","儿童","少年","少年","少年","青年","青年","青年","成人","成人","成人","成人","成人","成人","成人","成人","成人","成人","成人","成人","成人","中年人","中年人"];
-            const ai = Math.min(Math.floor(gameState.age / 3), avatars.length - 1);
-            document.getElementById('avatar').textContent = avatars[ai];
-            document.getElementById('charName').textContent = names[ai];
-            document.getElementById('charInfo').textContent = gameState.age + '岁 · ' + gameState.job;
-            document.getElementById('skillsList').innerHTML = gameState.skills.length ? gameState.skills.map(s => '<span class="skill-tag">' + s + '</span>').join('') : '<span class="skill-tag">无</span>';
-            document.getElementById('eventLog').innerHTML = gameState.events.slice(-5).map(e => '<div class="event-item">🌟 <span style="color:#00ff88">' + e.age + '岁</span> - ' + e.event + '</div>').join('');
-            const evt = events[gameState.age] || generateDefaultEvent(gameState.age);
-            document.getElementById('sceneImage').textContent = evt.scene;
-            document.getElementById('npcAvatar').textContent = evt.avatar;
-            document.getElementById('npcName').textContent = evt.npc;
-            document.getElementById('dialogueText').textContent = evt.dialogue;
-            const valid = evt.choices.filter(c => !c.condition || c.condition());
-            document.getElementById('choicesList').innerHTML = valid.map((c, i) => '<button class="choice-btn" onclick="window.makeChoice(' + i + ')">' + c.text + '</button>').join('');
+        function getValidChoices(evt) {
+            if (!evt || !evt.choices) return [];
+            return evt.choices.filter(function(c) {
+                if (!c.condition) return true;
+                try { return c.condition(); } catch(e) { return true; }
+            });
         }
 
         function applyEffect(effect) {
+            if (!effect) return;
             if (effect.money) gameState.money += effect.money;
             if (effect.health) gameState.health += effect.health;
             if (effect.intelligence) gameState.intelligence += effect.intelligence;
@@ -263,7 +235,7 @@
             if (effect.career) gameState.careerLevel += effect.career;
             if (effect.relationship) gameState.relationship += effect.relationship;
             if (effect.job) gameState.job = effect.job;
-            if (effect.skill && !gameState.skills.includes(effect.skill)) gameState.skills.push(effect.skill);
+            if (effect.skill && gameState.skills.indexOf(effect.skill) === -1) gameState.skills.push(effect.skill);
             gameState.health = Math.max(0, Math.min(100, gameState.health));
             gameState.intelligence = Math.max(0, Math.min(100, gameState.intelligence));
             gameState.charm = Math.max(0, Math.min(100, gameState.charm));
@@ -275,40 +247,6 @@
             if (gameState.money < -50000) { alert('💸 负债过多，游戏结束！\n\n最终评分: ' + calculateScore()); return true; }
             return false;
         }
-
-        function makeChoice(index) {
-            const evt = events[gameState.age] || generateDefaultEvent(gameState.age);
-            const valid = evt.choices.filter(c => !c.condition || c.condition());
-            const choice = valid[index];
-            applyEffect(choice.effect);
-            gameState.events.push({ age: gameState.age, event: choice.text });
-            if (choice.text.includes('大学')) gameState.history.push('大学');
-            if (choice.text.includes('创业')) gameState.history.push('创业');
-            if (choice.text.includes('结婚')) gameState.history.push('结婚');
-            if (checkGameOver()) return;
-            gameState.age++;
-            if (gameState.age > 65) { showEnding(); return; }
-            showResult(choice.result);
-        }
-
-        function showResult(text) {
-            document.getElementById('choicesPanel').innerHTML = '<div class="result-box"><div class="result-title">📝 今年的收获</div><div class="result-text">' + text + '</div></div><button class="choice-btn" onclick="window.continueGame()" style="background:linear-gradient(135deg,#00ff88,#00ccff);color:#000;font-weight:bold;">进入下一年 →</button><div class="free-input"><input type="text" id="freeInput" placeholder="💬 输入你的想法..."><button onclick="window.submitFreeChoice()">提交</button></div>';
-        }
-
-        function continueGame() { updateUI(); }
-
-        window.submitFreeChoice = function() {
-            var input = document.getElementById('freeInput').value.trim();
-            if (!input) { alert('请输入你的想法！'); return; }
-            var choices = generateAIChoice(input);
-            var choice = choices[0];
-            applyEffect(choice.effect);
-            gameState.events.push({ age: gameState.age, event: input });
-            if (checkGameOver()) return;
-            gameState.age++;
-            if (gameState.age > 65) { showEnding(); return; }
-            showResult(choice.result);
-        };
 
         function calculateScore() {
             var s = 0;
@@ -334,6 +272,94 @@
             alert('🎮 游戏结束！\n\n' + emoji + ' ' + ending + '\n\n最终评分: ' + score + '\n\n感谢游玩！');
         }
 
+        function makeChoice(index) {
+            var evt = getCurrentEvent();
+            var validChoices = getValidChoices(evt);
+            if (index >= validChoices.length) return;
+            var choice = validChoices[index];
+            applyEffect(choice.effect);
+            gameState.events.push({ age: gameState.age, event: choice.text });
+            if (choice.text.indexOf('大学') !== -1) gameState.history.push('大学');
+            if (choice.text.indexOf('创业') !== -1) gameState.history.push('创业');
+            if (choice.text.indexOf('结婚') !== -1) gameState.history.push('结婚');
+            if (checkGameOver()) return;
+            gameState.age++;
+            if (gameState.age > 65) { showEnding(); return; }
+            showResult(choice.result);
+        }
+
+        function showResult(text) {
+            var panel = document.getElementById('choicesPanel');
+            panel.innerHTML = '<div class="result-box"><div class="result-title">📝 今年的收获</div><div class="result-text">' + text + '</div></div>' +
+                '<button class="choice-btn" id="continueBtn" style="background:linear-gradient(135deg,#00ff88,#00ccff);color:#000;font-weight:bold;">进入下一年 →</button>' +
+                '<div class="free-input"><input type="text" id="freeInput" placeholder="💬 输入你的想法..."><button id="submitBtn2">提交</button></div>';
+            document.getElementById('continueBtn').onclick = continueGame;
+            document.getElementById('submitBtn2').onclick = submitFreeChoice;
+        }
+
+        function continueGame() { updateUI(); }
+
+        function submitFreeChoice() {
+            var input = document.getElementById('freeInput').value.trim();
+            if (!input) { alert('请输入你的想法！'); return; }
+            var choices = generateAIChoice(input);
+            var choice = choices[0];
+            applyEffect(choice.effect);
+            gameState.events.push({ age: gameState.age, event: input });
+            if (checkGameOver()) return;
+            gameState.age++;
+            if (gameState.age > 65) { showEnding(); return; }
+            showResult(choice.result);
+        }
+
+        function generateAIChoice(input) {
+            var l = input.toLowerCase();
+            var effect = {}, result = "";
+            if (l.indexOf('工作') !== -1) { effect = { money: 5000 + gameState.careerLevel * 1000, career: 1 }; result = "你找到了工作。"; }
+            else if (l.indexOf('学习') !== -1) { effect = { intelligence: 10, money: -2000 }; result = "你努力学习。"; }
+            else if (l.indexOf('创业') !== -1) { effect = { money: 10000, fame: 10 }; result = "你开始创业。"; }
+            else if (l.indexOf('旅行') !== -1) { effect = { charm: 10, money: -5000, health: 5 }; result = "你出去旅行了！"; }
+            else if (l.indexOf('健身') !== -1 || l.indexOf('运动') !== -1) { effect = { health: 15 }; result = "你锻炼身体！"; }
+            else if (l.indexOf('社交') !== -1 || l.indexOf('认识') !== -1) { effect = { charm: 10, fame: 5 }; result = "认识了新朋友。"; }
+            else if (l.indexOf('投资') !== -1 || l.indexOf('理财') !== -1) { var g = Math.floor(Math.random() * 20000); effect = { money: g }; result = g > 0 ? "赚了" + g + "元！" : "有亏损。"; }
+            else { effect = { money: 2000, health: 5 }; result = "度过了充实的一年。"; }
+            return [{ text: input, effect: effect, result: result }];
+        }
+
+        function updateUI() {
+            document.getElementById('yearDisplay').textContent = '🎂 第 ' + gameState.age + ' 年';
+            document.getElementById('health').textContent = gameState.health;
+            document.getElementById('money').textContent = '¥' + gameState.money.toLocaleString();
+            document.getElementById('intelligence').textContent = gameState.intelligence;
+            document.getElementById('charm').textContent = gameState.charm;
+            document.getElementById('luck').textContent = gameState.luck;
+            document.getElementById('fame').textContent = gameState.fame;
+            document.getElementById('healthBar').style.width = Math.min(100, gameState.health) + '%';
+            document.getElementById('intBar').style.width = Math.min(100, gameState.intelligence) + '%';
+            document.getElementById('charmBar').style.width = Math.min(100, gameState.charm) + '%';
+            document.getElementById('luckBar').style.width = Math.min(100, gameState.luck) + '%';
+            var avatars = ["👶","👶","👶","👧","👧","👧","👦","👦","👦","🧑","🧑","🧑","👱","👱","👱","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨"];
+            var names = ["婴儿","婴儿","婴儿","幼儿","幼儿","幼儿","儿童","儿童","儿童","少年","少年","少年","青年","青年","青年","成人","成人","成人","成人","成人","成人","成人","成人","成人","成人","成人","成人","成人","中年人","中年人"];
+            var ai = Math.min(Math.floor(gameState.age / 3), avatars.length - 1);
+            document.getElementById('avatar').textContent = avatars[ai];
+            document.getElementById('charName').textContent = names[ai];
+            document.getElementById('charInfo').textContent = gameState.age + '岁 · ' + gameState.job;
+            document.getElementById('skillsList').innerHTML = gameState.skills.length ? gameState.skills.map(function(s) { return '<span class="skill-tag">' + s + '</span>'; }).join('') : '<span class="skill-tag">无</span>';
+            document.getElementById('eventLog').innerHTML = gameState.events.slice(-5).map(function(e) { return '<div class="event-item">🌟 <span style="color:#00ff88">' + e.age + '岁</span> - ' + e.event + '</div>'; }).join('');
+            var evt = getCurrentEvent();
+            document.getElementById('sceneImage').textContent = evt.scene;
+            document.getElementById('npcAvatar').textContent = evt.avatar;
+            document.getElementById('npcName').textContent = evt.npc;
+            document.getElementById('dialogueText').textContent = evt.dialogue;
+            var validChoices = getValidChoices(evt);
+            document.getElementById('choicesList').innerHTML = validChoices.map(function(c, i) { return '<button class="choice-btn" data-index="' + i + '">' + c.text + '</button>'; }).join('');
+            var buttons = document.querySelectorAll('#choicesList .choice-btn');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].onclick = (function(idx) { return function() { makeChoice(idx); }; })(i);
+            }
+        }
+
+        document.getElementById('submitBtn').onclick = submitFreeChoice;
         updateUI();
     </script>
 </body>
