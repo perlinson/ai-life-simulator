@@ -252,13 +252,19 @@ function makeChoice(index) {
     gameState.age++;
     if (gameState.age > 65) { alert('🎮 游戏结束！恭喜通关！'); return; }
     generateFortune();
-    showResult(choice.result);
+    showResult(choice.result, true);
 }
 
-function showResult(text) {
+function showResult(text, autoNext) {
+    autoNext = autoNext || false;
+    if (autoNext) {
+        setTimeout(function() { updateUI(); generateFortune(); }, 1500);
+    }
+
     var panel = document.getElementById('choicesPanel');
-    panel.innerHTML = '<div class="result-box">📝 收获: ' + text + '</div>' +
-        '<button class="choice-btn" onclick="updateUI()" style="background:#00ff88;color:#000;font-weight:bold">进入下一年 ➡️</button>' +
+    var btnHtml = autoNext ? '' : '<button class="choice-btn" onclick="updateUI()" style="background:#00ff88;color:#000;font-weight:bold">进入下一年 ➡️</button>';
+    panel.innerHTML = '<div class="result-box">📝 收获: ' + text + '</div>' + btnHtml +
+        
         '<div class="free-input"><input type="text" id="freeInput" placeholder="输入你的想法"><button onclick="submitFreeChoice()">提交</button></div>';
 }
 
@@ -275,7 +281,7 @@ function submitFreeChoice() {
     gameState.age++;
     if (gameState.age > 65) { alert('🎮 游戏结束！恭喜通关！'); return; }
     generateFortune();
-    showResult(choice.result);
+    showResult(choice.result, true);
 }
 
 function generateAIChoice(input) {
