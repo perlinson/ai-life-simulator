@@ -252,7 +252,7 @@ function makeChoice(index) {
     gameState.age++;
     if (gameState.age > 65) { alert('🎮 游戏结束！恭喜通关！'); return; }
     generateFortune();
-    showResult(choice.result, true);
+    updateUI();
 }
 
 function showResult(text, autoNext) {
