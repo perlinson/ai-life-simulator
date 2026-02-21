@@ -1,152 +1,318 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎮 AI人生模拟器 - 你的选择决定命运</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); min-height: 100vh; color: #e8e8e8; }
-        .game-container { max-width: 900px; margin: 0 auto; padding: 20px; min-height: 100vh; }
-        .status-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-bottom: 20px; }
-        .stat-item { background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        .stat-label { font-size: 10px; color: #888; margin-bottom: 5px; }
-        .stat-value { font-size: 18px; font-weight: bold; }
-        .stat-bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 5px; overflow: hidden; }
-        .stat-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
-        .main-area { display: grid; grid-template-columns: 250px 1fr; gap: 20px; }
-        @media (max-width: 768px) { .main-area { grid-template-columns: 1fr; } }
-        .left-panel { display: flex; flex-direction: column; gap: 15px; }
-        .panel { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .panel-title { font-size: 12px; color: #00ff88; margin-bottom: 10px; text-transform: uppercase; }
-        .avatar { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 40px; background: linear-gradient(135deg, #667eea, #764ba2); }
-        .char-name { text-align: center; font-size: 16px; font-weight: bold; }
-        .char-info { text-align: center; font-size: 11px; color: #888; margin-bottom: 10px; }
-        .skills-list { display: flex; flex-wrap: wrap; gap: 5px; }
-        .skill-tag { padding: 4px 8px; background: rgba(255,255,255,0.1); border-radius: 12px; font-size: 10px; }
-        .event-log { max-height: 200px; overflow-y: auto; font-size: 11px; }
-        .event-item { padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .center-area { display: flex; flex-direction: column; gap: 15px; }
-        .story-panel { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); flex: 1; }
-        .scene-image { width: 100%; height: 120px; background: linear-gradient(135deg, #2d3436, #636e72); border-radius: 8px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-size: 50px; }
-        .npc-area { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 15px; }
-        .npc-avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #fdcb6e, #e17055); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
-        .dialogue-box { flex: 1; background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; }
-        .npc-name { font-size: 12px; color: #ffd700; margin-bottom: 5px; }
-        .dialogue-text { font-size: 14px; line-height: 1.6; }
-        .choices-panel { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        .choices-title { font-size: 12px; color: #00ccff; margin-bottom: 10px; }
-        .choice-btn { display: block; width: 100%; padding: 12px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #fff; text-align: left; cursor: pointer; margin-bottom: 8px; transition: all 0.3s; }
-        .choice-btn:hover { background: rgba(0,255,136,0.1); border-color: #00ff88; transform: translateX(5px); }
-        .result-box { background: rgba(0,255,136,0.1); border: 1px solid #00ff88; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-        .result-title { color: #00ff88; font-size: 14px; margin-bottom: 10px; }
-        .result-text { font-size: 13px; line-height: 1.6; }
-        .free-input { margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .free-input input { width: 100%; padding: 10px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #fff; font-size: 14px; }
-        .free-input input:focus { outline: none; border-color: #00ff88; }
-        .free-input button { margin-top: 10px; padding: 10px 20px; background: linear-gradient(135deg, #00ff88, #00ccff); border: none; border-radius: 8px; color: #000; font-weight: bold; cursor: pointer; }
-        .year-display { text-align: center; font-size: 24px; font-weight: bold; color: #ffd700; margin-bottom: 15px; }
-    </style>
+<meta charset="UTF-8">
+<title>🎮 AI人生模拟器</title>
+<style>
+body{font-family:'Microsoft YaHei';background:#1a1a2e;color:#fff;padding:20px;margin:0}
+.game-container{max-width:800px;margin:0 auto}
+.year-display{text-align:center;font-size:24px;color:#ffd700;margin-bottom:20px}
+.status-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.stat-item{background:rgba(0,0,0,0.3);padding:10px;border-radius:8px;min-width:80px;text-align:center}
+.stat-label{font-size:10px;color:#888}
+.stat-value{font-size:18px;font-weight:bold}
+.main-area{display:grid;grid-template-columns:200px 1fr;gap:20px}
+.avatar{font-size:50px;text-align:center;margin-bottom:10px}
+.char-name{text-align:center;font-size:18px;margin-bottom:5px}
+.char-info{text-align:center;color:#888;font-size:12px}
+.skills-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.skill-tag{background:rgba(255,255,255,0.1);padding:3px 8px;border-radius:10px;font-size:11px}
+.event-log{font-size:11px;max-height:150px;overflow-y:auto;margin-top:10px}
+.story-panel{background:rgba(0,0,0,0.3);padding:15px;border-radius:10px}
+.scene-image{font-size:40px;text-align:center;margin-bottom:10px}
+.npc-area{display:flex;gap:10px;margin-bottom:10px}
+.npc-avatar{font-size:30px}
+.dialogue-box{background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;flex:1}
+.npc-name{color:#ffd700;font-size:12px;margin-bottom:5px}
+.choices-title{font-size:14px;color:#00ccff;margin:10px 0}
+.choice-btn{display:block;width:100%;padding:12px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff;text-align:left;margin-bottom:8px;cursor:pointer}
+.choice-btn:hover{background:rgba(0,255,136,0.2);border-color:#00ff88}
+.result-box{background:rgba(0,255,136,0.2);padding:15px;border-radius:8px;margin-bottom:10px}
+.free-input{margin-top:15px}
+.free-input input{width:100%;padding:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff}
+.free-input button{margin-top:8px;padding:10px 20px;background:#00ff88;border:none;border-radius:8px;color:#000;font-weight:bold;cursor:pointer}
+@media(max-width:600px){.main-area{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="year-display" id="yearDisplay">🎂 第 0 年</div>
-        <div class="status-bar">
-            <div class="stat-item"><div class="stat-label">健康</div><div class="stat-value" id="health">100</div><div class="stat-bar"><div class="stat-fill" id="healthBar" style="width:100%; background:#00ff88"></div></div></div>
-            <div class="stat-item"><div class="stat-label">金钱</div><div class="stat-value" id="money">¥0</div></div>
-            <div class="stat-item"><div class="stat-label">智力</div><div class="stat-value" id="intelligence">50</div><div class="stat-bar"><div class="stat-fill" id="intBar" style="width:50%; background:#00ccff"></div></div></div>
-            <div class="stat-item"><div class="stat-label">魅力</div><div class="stat-value" id="charm">50</div><div class="stat-bar"><div class="stat-fill" id="charmBar" style="width:50%; background:#ff6b6b"></div></div></div>
-            <div class="stat-item"><div class="stat-label">幸运</div><div class="stat-value" id="luck">50</div><div class="stat-bar"><div class="stat-fill" id="luckBar" style="width:50%; background:#ffd700"></div></div></div>
-            <div class="stat-item"><div class="stat-label">声望</div><div class="stat-value" id="fame">0</div></div>
-        </div>
-        <div class="main-area">
-            <div class="left-panel">
-                <div class="panel">
-                    <div class="avatar" id="avatar">👶</div>
-                    <div class="char-name" id="charName">婴儿</div>
-                    <div class="char-info" id="charInfo">0岁</div>
-                </div>
-                <div class="panel">
-                    <div class="panel-title">🎯 技能</div>
-                    <div class="skills-list" id="skillsList"><span class="skill-tag">无</span></div>
-                </div>
-                <div class="panel">
-                    <div class="panel-title">📜 人生经历</div>
-                    <div class="event-log" id="eventLog"><div class="event-item">🌟 你出生了...</div></div>
-                </div>
-            </div>
-            <div class="center-area">
-                <div class="story-panel">
-                    <div class="scene-image" id="sceneImage">🏥</div>
-                    <div class="npc-area">
-                        <div class="npc-avatar" id="npcAvatar">👩</div>
-                        <div class="dialogue-box">
-                            <div class="npc-name" id="npcName">妈妈</div>
-                            <div class="dialogue-text" id="dialogueText">宝贝，欢迎来到这个世界！</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="choices-panel" id="choicesPanel">
-                    <div class="choices-title">✨ 你决定：</div>
-                    <div id="choicesList"></div>
-                    <div class="free-input">
-                        <input type="text" id="freeInput" placeholder="💬 输入你的想法，AI会生成个性化选择...">
-                        <button id="submitBtn">提交</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        var gameState = { age: 0, health: 100, money: 0, intelligence: 50, charm: 50, luck: 50, fame: 0, skills: [], events: [], job: "婴儿", relationship: 0, careerLevel: 0, history: [] };
+<div class="game-container">
+<div class="year-display" id="yearDisplay">第 0 年</div>
+<div class="status-bar">
+<div class="stat-item"><div class="stat-label">健康</div><div class="stat-value" id="health">100</div></div>
+<div class="stat-item"><div class="stat-label">金钱</div><div class="stat-value" id="money">¥0</div></div>
+<div class="stat-item"><div class="stat-label">智力</div><div class="stat-value" id="intelligence">50</div></div>
+<div class="stat-item"><div class="stat-label">魅力</div><div class="stat-value" id="charm">50</div></div>
+<div class="stat-item"><div class="stat-label">幸运</div><div class="stat-value" id="luck">50</div></div>
+<div class="stat-item"><div class="stat-label">声望</div><div class="stat-value" id="fame">0</div></div>
+</div>
+<div class="main-area">
+<div class="left-panel">
+<div class="avatar" id="avatar">👶</div>
+<div class="char-name" id="charName">婴儿</div>
+<div class="char-info" id="charInfo">0岁</div>
+<div style="margin-top:15px"><div style="color:#00ff88;font-size:12px;margin-bottom:5px">技能</div><div class="skills-list" id="skillsList"><span class="skill-tag">无</span></div></div>
+<div style="margin-top:15px"><div style="color:#00ff88;font-size:12px;margin-bottom:5px">经历</div><div class="event-log" id="eventLog"><div>🌟 你出生了</div></div></div>
+</div>
+<div class="center-area">
+<div class="story-panel">
+<div class="scene-image" id="sceneImage">🏥</div>
+<div class="npc-area"><div class="npc-avatar" id="npcAvatar">👩</div><div class="dialogue-box"><div class="npc-name" id="npcName">妈妈</div><div id="dialogueText">宝贝，欢迎来到这个世界！</div></div></div>
+</div>
+<div class="choices-panel" id="choicesPanel">
+<div class="choices-title">你决定：</div>
+<div id="choicesList"></div>
+<div class="free-input"><input type="text" id="freeInput" placeholder="输入你的想法，AI生成选择"><button id="submitBtn">提交</button></div>
+</div>
+</div>
+</div>
+</div>
+<script>
+// 游戏状态
+var gameState = {
+    age: 0,
+    health: 100,
+    money: 0,
+    intelligence: 50,
+    charm: 50,
+    luck: 50,
+    fame: 0,
+    skills: [],
+    events: [],
+    job: "婴儿",
+    relationship: 0,
+    careerLevel: 0
+};
 
-        var events = {
-            0: { npc: "妈妈", scene: "🏥", avatar: "👩", dialogue: "宝贝，欢迎来到这个世界！", choices: [
-                { text: "健康成长", effect: { health: 10 }, result: "你健康成长着。" },
-                { text: "哭闹表达", effect: { charm: 5 }, result: "你用哭闹来表达需求。" },
-                { text: "安静睡觉", effect: { health: 5 }, result: "你大部分时间在睡觉。" },
-                { text: "好奇观察", effect: { intelligence: 5 }, result: "你好奇地观察着世界。" }
-            ]},
-            3: { npc: "爸爸", scene: "🏠", avatar: "👨", dialogue: "3岁了，该学点什么了。", choices: [
-                { text: "玩玩具车", effect: { intelligence: 10, skill: "机械兴趣" }, result: "你展现机械天赋！" },
-                { text: "画画", effect: { intelligence: 5, skill: "绘画兴趣" }, result: "你喜欢画画。" },
-                { text: "和其他小朋友玩", effect: { charm: 10, skill: "社交" }, result: "你交到了第一个朋友！" },
-                { text: "听故事", effect: { intelligence: 10 }, result: "你很喜欢听故事。" }
-            ]},
-            6: { npc: "老师", scene: "🏫", avatar: "👨‍🏫", dialogue: "上小学了！你最喜欢哪门课？", choices: [
-                { text: "数学课", effect: { intelligence: 15, skill: "数学" }, result: "你展现了数学天赋！" },
-                { text: "语文课", effect: { intelligence: 10, skill: "语文" }, result: "你爱上了阅读。" },
-                { text: "体育课", effect: { health: 15, skill: "运动" }, result: "你运动能力很强！" },
-                { text: "音乐课", effect: { charm: 10, skill: "音乐" }, result: "你对音乐很有兴趣。" }
-            ]},
-            9: { npc: "班主任", scene: "🏫", avatar: "👩‍🏫", dialogue: "最近学习怎么样？", choices: [
-                { text: "参加奥数班", effect: { intelligence: 15, money: -2000, skill: "竞赛数学" }, result: "你奥数获奖了！" },
-                { text: "学钢琴", effect: { charm: 10, money: -3000, skill: "钢琴" }, result: "你学会了弹钢琴！" },
-                { text: "踢足球", effect: { health: 10, skill: "足球" }, result: "你成了足球队主力！" },
-                { text: "看课外书", effect: { intelligence: 10, skill: "阅读" }, result: "你读了很多课外书。" }
-            ]},
-            12: { npc: "同学", scene: "🏫", avatar: "👫", dialogue: "初中了！", choices: [
-                { text: "努力学习", effect: { intelligence: 15, fame: 5 }, result: "你成绩优异！" },
-                { text: "打篮球", effect: { health: 15, skill: "篮球", charm: 10 }, result: "你成了篮球队长！" },
-                { text: "追明星", effect: { charm: 5, fame: 10 }, result: "你是追星族。" },
-                { text: "上网聊天", effect: { intelligence: -5, skill: "电脑" }, result: "你学会了上网。" }
-            ]},
-            15: { npc: "家长", scene: "🏠", avatar: "👨‍👩", dialogue: "高中了！要考大学了。", choices: [
-                { text: "专心备考", effect: { intelligence: 20, money: -5000 }, result: "你刻苦学习。" },
-                { text: "参加竞赛", effect: { fame: 15, intelligence: 10, skill: "竞赛" }, result: "你获得了竞赛奖项！" },
-                { text: "谈恋爱", effect: { relationship: 20, charm: 10 }, result: "你开始了第一段恋情。" },
-                { text: "发展兴趣", effect: { skill: "兴趣特长", charm: 10 }, result: "你发展了兴趣爱好。" }
-            ]},
-            18: { npc: "父亲", scene: "🏠", avatar: "👨", dialogue: "孩子，你18岁了，该做决定了。", choices: [
-                { text: "找一份稳定的工作", effect: { money: 3000, skill: "工作经验", job: "职员", career: 1 }, result: "你找到了稳定工作。" },
-                { text: "继续深造，考大学", effect: { money: -5000, intelligence: 15, skill: "高等教育" }, result: "你成功考入大学！" },
-                { text: "创业，做一番大事业", effect: { luck: 55, skill: "创业经验" }, result: "你开始了创业之路..." },
-                { text: "去旅行，寻找人生意义", effect: { charm: 10, money: -3000, skill: "旅行经验" }, result: "你踏上了旅途。" }
-            ]},
-            21: { npc: "学长", scene: "🏫", avatar: "👨‍🎓", dialogue: "兄弟，有个机会！", choices: [
-                { text: "参加创业比赛", condition: function() { return gameState.intelligence > 55; }, effect: { fame: 20, money: 5000 }, result: "项目获奖了！" },
-                { text: "去公司实习", condition: function() { return gameState.skills.indexOf('工作经验') !== -1; }, effect: { money: 2000, skill: "实习经验", career: 1 }, result: "实习表现不错。" },
-                { text: "加入社团", effect: { charm: 10, skill: "社交" }, result: "你认识了很多新朋友。" },
-                { text: "专注学习", effect: { intelligence: 5 }, result: "成绩提高了。" }
-            ]},
-            24: { npc: "上司", scene: "🏢", avatar: "👨‍💼", dialogue:
+// 预设事件
+var events = {
+    0: {
+        npc: "妈妈",
+        scene: "🏥",
+        avatar: "👩",
+        dialogue: "宝贝，欢迎来到这个世界！",
+        choices: [
+            { text: "健康成长", effect: { health: 10 }, result: "你健康成长着。" },
+            { text: "哭闹表达", effect: { charm: 5 }, result: "你用哭闹来表达需求。" },
+            { text: "安静睡觉", effect: { health: 5 }, result: "你大部分时间在睡觉。" },
+            { text: "好奇观察", effect: { intelligence: 5 }, result: "你好奇地观察着世界。" }
+        ]
+    },
+    3: {
+        npc: "爸爸",
+        scene: "🏠",
+        avatar: "👨",
+        dialogue: "3岁了，该学点什么了。",
+        choices: [
+            { text: "玩玩具车", effect: { intelligence: 10, skill: "机械" }, result: "你展现机械天赋！" },
+            { text: "画画", effect: { intelligence: 5, skill: "绘画" }, result: "你喜欢画画。" },
+            { text: "和其他小朋友玩", effect: { charm: 10, skill: "社交" }, result: "你交到了第一个朋友！" },
+            { text: "听故事", effect: { intelligence: 10 }, result: "你很喜欢听故事。" }
+        ]
+    },
+    6: {
+        npc: "老师",
+        scene: "🏫",
+        avatar: "👨‍🏫",
+        dialogue: "上小学了！你最喜欢哪门课？",
+        choices: [
+            { text: "数学课", effect: { intelligence: 15, skill: "数学" }, result: "你展现了数学天赋！" },
+            { text: "语文课", effect: { intelligence: 10, skill: "语文" }, result: "你爱上了阅读。" },
+            { text: "体育课", effect: { health: 15, skill: "运动" }, result: "你运动能力很强！" },
+            { text: "音乐课", effect: { charm: 10, skill: "音乐" }, result: "你对音乐很有兴趣。" }
+        ]
+    }
+};
+
+// 默认事件生成器
+function getDefaultEvent(age) {
+    return {
+        npc: ["朋友", "同事", "家人"][age % 3],
+        scene: ["🏢", "🏠", "🌳"][age % 3],
+        avatar: "👤",
+        dialogue: "今年你" + age + "岁了，生活中遇到了一个新的选择...",
+        choices: [
+            { text: "努力工作", effect: { money: 8000, career: 1, health: -2 }, result: "你努力工作，收入增加了。" },
+            { text: "陪伴家人", effect: { health: 10, relationship: 10 }, result: "你和家人在一起的时光很幸福。" },
+            { text: "投资理财", effect: { money: Math.floor(Math.random() * 20000 - 5000), skill: "投资" }, result: "投资收益有盈亏。" },
+            { text: "学习新知识", effect: { intelligence: 10, skill: "技能" }, result: "你学会了新技能！" }
+        ]
+    };
+}
+
+// 获取当前事件
+function getCurrentEvent() {
+    return events[gameState.age] || getDefaultEvent(gameState.age);
+}
+
+// 获取有效选项
+function getValidChoices(evt) {
+    if (!evt || !evt.choices) return [];
+    var valid = [];
+    for (var i = 0; i < evt.choices.length; i++) {
+        var c = evt.choices[i];
+        if (!c.condition) {
+            valid.push(c);
+        } else {
+            try {
+                if (c.condition()) {
+                    valid.push(c);
+                }
+            } catch(e) {
+                valid.push(c);
+            }
+        }
+    }
+    return valid;
+}
+
+// 应用效果
+function applyEffect(effect) {
+    if (!effect) return;
+    if (effect.money) gameState.money += effect.money;
+    if (effect.health) gameState.health += effect.health;
+    if (effect.intelligence) gameState.intelligence += effect.intelligence;
+    if (effect.charm) gameState.charm += effect.charm;
+    if (effect.luck) gameState.luck += effect.luck;
+    if (effect.fame) gameState.fame += effect.fame;
+    if (effect.career) gameState.careerLevel += effect.career;
+    if (effect.relationship) gameState.relationship += effect.relationship;
+    if (effect.job) gameState.job = effect.job;
+    if (effect.skill && gameState.skills.indexOf(effect.skill) === -1) {
+        gameState.skills.push(effect.skill);
+    }
+    gameState.health = Math.max(0, Math.min(100, gameState.health));
+    gameState.intelligence = Math.max(0, Math.min(100, gameState.intelligence));
+    gameState.charm = Math.max(0, Math.min(100, gameState.charm));
+    gameState.luck = Math.max(0, Math.min(100, gameState.luck));
+}
+
+// 检查游戏结束
+function checkGameOver() {
+    if (gameState.health <= 0) {
+        alert('💀 游戏结束！健康耗尽');
+        return true;
+    }
+    if (gameState.money < -50000) {
+        alert('💸 游戏结束！负债过多');
+        return true;
+    }
+    return false;
+}
+
+// 选择选项
+function makeChoice(index) {
+    var evt = getCurrentEvent();
+    var validChoices = getValidChoices(evt);
+    
+    if (index >= validChoices.length || index < 0) {
+        alert('选项无效！');
+        return;
+    }
+    
+    var choice = validChoices[index];
+    applyEffect(choice.effect);
+    gameState.events.push({ age: gameState.age, event: choice.text });
+    
+    if (checkGameOver()) return;
+    
+    gameState.age++;
+    
+    if (gameState.age > 65) {
+        alert('🎮 游戏结束！恭喜通关！');
+        return;
+    }
+    
+    showResult(choice.result);
+}
+
+// 显示结果
+function showResult(text) {
+    var panel = document.getElementById('choicesPanel');
+    panel.innerHTML = '<div class="result-box">📝 收获: ' + text + '</div>' +
+        '<button class="choice-btn" onclick="updateUI()" style="background:#00ff88;color:#000;font-weight:bold">进入下一年</button>' +
+        '<div class="free-input"><input type="text" id="freeInput" placeholder="输入你的想法"><button onclick="submitFreeChoice()">提交</button></div>';
+}
+
+// 提交自由输入
+function submitFreeChoice() {
+    var input = document.getElementById('freeInput');
+    if (!input) return;
+    
+    var text = input.value.trim();
+    if (!text) {
+        alert('请输入你的想法！');
+        return;
+    }
+    
+    var choices = generateAIChoice(text);
+    var choice = choices[0];
+    
+    applyEffect(choice.effect);
+    gameState.events.push({ age: gameState.age, event: text });
+    
+    if (checkGameOver()) return;
+    
+    gameState.age++;
+    
+    if (gameState.age > 65) {
+        alert('🎮 游戏结束！恭喜通关！');
+        return;
+    }
+    
+    showResult(choice.result);
+}
+
+// AI生成选择
+function generateAIChoice(input) {
+    var l = input.toLowerCase();
+    var effect = {}, result = "";
+    if (l.indexOf('工作') !== -1) { effect = { money: 5000 + gameState.careerLevel * 1000, career: 1 }; result = "你找到了工作。"; }
+    else if (l.indexOf('学习') !== -1) { effect = { intelligence: 10, money: -2000 }; result = "你努力学习。"; }
+    else if (l.indexOf('创业') !== -1) { effect = { money: 10000, fame: 10 }; result = "你开始创业。"; }
+    else if (l.indexOf('旅行') !== -1) { effect = { charm: 10, money: -5000, health: 5 }; result = "你出去旅行了！"; }
+    else if (l.indexOf('健身') !== -1 || l.indexOf('运动') !== -1) { effect = { health: 15 }; result = "你锻炼身体！"; }
+    else if (l.indexOf('社交') !== -1 || l.indexOf('认识') !== -1) { effect = { charm: 10, fame: 5 }; result = "认识了新朋友。"; }
+    else if (l.indexOf('投资') !== -1 || l.indexOf('理财') !== -1) { var g = Math.floor(Math.random() * 20000); effect = { money: g }; result = g > 0 ? "赚了" + g + "元！" : "有亏损。"; }
+    else { effect = { money: 2000, health: 5 }; result = "度过了充实的一年。"; }
+    return [{ text: input, effect: effect, result: result }];
+}
+
+// 更新UI
+function updateUI() {
+    document.getElementById('yearDisplay').textContent = '第 ' + gameState.age + ' 年';
+    document.getElementById('health').textContent = gameState.health;
+    document.getElementById('money').textContent = '¥' + gameState.money;
+    document.getElementById('intelligence').textContent = gameState.intelligence;
+    document.getElementById('charm').textContent = gameState.charm;
+    document.getElementById('luck').textContent = gameState.luck;
+    document.getElementById('fame').textContent = gameState.fame;
+    
+    var avatars = ["👶", "👧", "👦", "🧑", "👱", "👨", "👨", "👨", "👨", "👨"];
+    var names = ["婴儿", "幼儿", "儿童", "少年", "青年", "成人", "成人", "成人", "中年人", "老年人"];
+    document.getElementById('avatar').textContent = avatars[Math.min(Math.floor(gameState.age / 5), avatars.length - 1)];
+    document.getElementById('charName').textContent = names[Math.min(Math.floor(gameState.age / 10), names.length - 1)];
+    document.getElementById('charInfo').textContent = gameState.age + '岁 ' + gameState.job;
+    
+    document.getElementById('skillsList').innerHTML = gameState.skills.length ? 
+        gameState.skills.map(function(s) { return '<span class="skill-tag">' + s + '</span>'; }).join('') : 
+        '<span class="skill-tag">无</span>';
+    
+    document.getElementById('eventLog').innerHTML = gameState.events.slice(-5).map(function(e) {
+        return '<div>🌟 ' + e.age + '岁 - ' + e.event + '</div>';
+    }).join('');
+    
+    var evt = getCurrentEvent();
+    document.getElementById('sceneImage').textContent = evt.scene;
+    document.getElementById('npcAvatar').textContent = evt.avatar;
+    document.getElementById('npcName').textContent = evt.npc;
+    document.getElementById('dialogueText').textContent = evt.dialogue;
+    
+    var valid = getValidChoices(evt);
+    document.getElementById('choicesList').innerHTML = valid.map(function(c, i) {
+        return '<button class="choice-btn" onclick="makeChoice(' + i + ')">' + c.text + '</button>';
+    }).join('');
+}
+
+// 初始化
+document.getElementById('submitBtn').onclick = function() { submitFreeChoice(); };
+updateUI();
