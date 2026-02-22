@@ -72,7 +72,7 @@ body{font-family:'Microsoft YaHei';background:#1a1a2e;color:#fff;padding:20px;ma
 
 <div class="status-bar">
 <div class="stat-item"><div class="stat-label">❤️ 生命</div><div class="stat-value" id="life">100</div><div class="stat-bar"><div class="stat-fill" id="lifeBar" style="width:100%;background:#ff4444"></div></div></div>
-<div class="stat-item"><div class="stat-label">💚 健康</div><div class="stat-value" id="health">100</div><div class="stat-bar"><div class="stat-fill" id="healthBar" style="width:50%;background:#00ff88"></div></div></div>
+<div class="stat-item"><div class="stat-label">💚 健康</div><div class="stat-value" id="health">100</div><div class="stat-bar"><div class="stat-fill" id="healthBar" style="width:100%;background:#00ff88"></div></div></div>
 <div class="stat-item"><div class="stat-label">💰 金钱</div><div class="stat-value" id="money">¥0</div></div>
 <div class="stat-item"><div class="stat-label">🧠 智力</div><div class="stat-value" id="intelligence">50</div><div class="stat-bar"><div class="stat-fill" id="intBar" style="width:50%;background:#00ccff"></div></div></div>
 <div class="stat-item"><div class="stat-label">✨ 魅力</div><div class="stat-value" id="charm">50</div><div class="stat-bar"><div class="stat-fill" id="charmBar" style="width:50%;background:#ff6b6b"></div></div></div>
@@ -146,10 +146,11 @@ function getAgePhase(age) {
     return { name: "👴 老年期", npc: "子女", scene: "🏠", avatar: "👨‍👩‍👧" };
 }
 
-// 修复经济系统：普通选项5点，稀有10点，超稀有15点
+// v3优化版：1.降低稀有触发条件 2.增加健康恢复选项 3.老年人有退休金
 function getChoicesByAge() {
     var age = gameState.age;
     var isAdult = age >= 18;
+    var isElderly = age >= 60;  // 老年人
     var choices = [];
     
     if (age < 3) {
@@ -180,8 +181,8 @@ function getChoicesByAge() {
             { text: "💕 谈恋爱", effect: { charm: 3, relationship: 2 }, result: "你开始了恋情。", desc: "魅力+3, 关系+2", value: 5, extra: {关系:2} },
             { text: "🎮 玩游戏", effect: { charm: 5, intelligence: -3 }, result: "你沉迷游戏。", desc: "魅力+5, 智力-3", value: 2 }
         ];
-        // 稀有选项：智力>=60
-        if (gameState.intelligence >= 60) choices.push({ text: "🏆 参加奥赛", effect: { fame: 8, intelligence: 5 }, result: "你获得奥赛奖牌！", desc: "声望+8, 智力+5", value: 10, legendary: true, extra: {声望:8} });
+        // 稀有选项：智力>=50（原60）
+        if (gameState.intelligence >= 50) choices.push({ text: "🏆 参加奥赛", effect: { fame: 8, intelligence: 5 }, result: "你获得奥赛奖牌！", desc: "声望+8, 智力+5", value: 10, legendary: true, extra: {声望:8} });
     } else if (age < 22) {
         choices = [
             { text: "📚 考研深造", effect: { intelligence: 5 }, result: "你决定考研！", desc: "智力+5", value: 5 },
@@ -189,39 +190,40 @@ function getChoicesByAge() {
             { text: "🎭 参加社团", effect: { charm: 5 }, result: "你认识了很多朋友！", desc: "魅力+5", value: 5 },
             { text: "🎮 打游戏", effect: { charm: 5 }, result: "你享受大学生活。", desc: "魅力+5", value: 5 }
         ];
-        // 稀有：智力>=70
-        if (gameState.intelligence >= 70) choices.push({ text: "🚀 创业大赛", effect: { money: 10000, fame: 8 }, result: "你获得创业大赛冠军！", desc: "¥10000, 声望+8", value: 10, legendary: true, extra: {声望:8} });
+        // 稀有：智力>=60（原70）
+        if (gameState.intelligence >= 60) choices.push({ text: "🚀 创业大赛", effect: { money: 10000, fame: 8 }, result: "你获得创业大赛冠军！", desc: "¥10000, 声望+8", value: 10, legendary: true, extra: {声望:8} });
     } else if (age < 30) {
         choices = [
             { text: "💪 拼命工作", effect: { money: 8000, career: 1, health: -3 }, result: "你拼命工作！", desc: "¥8000, 职级+1, 健康-3", value: 5 },
             { text: "💕 找对象", effect: { relationship: 5 }, result: "你找到了另一半！", desc: "关系+5", value: 5, extra: {关系:5} },
             { text: "📚 继续学习", effect: { intelligence: 5 }, result: "你考取了证书！", desc: "智力+5", value: 5 },
-            { text: "🌴 享受生活", effect: { health: 5 }, result: "你好好享受生活。", desc: "健康+5", value: 5 }
+            { text: "🏃 养生保健", effect: { health: 8 }, result: "你注重养生！", desc: "健康+8", value: 5 }
         ];
-        // 稀有：关系>=30
-        if (gameState.relationship >= 30) choices.push({ text: "💍 结婚", effect: { relationship: 30, money: 5000, health: 5 }, result: "你结婚了！", desc: "关系+30, ¥5000, 健康+5", value: 10, legendary: true, extra: {关系:30} });
+        // 稀有：关系>=15（原30）
+        if (gameState.relationship >= 15) choices.push({ text: "💍 结婚", effect: { relationship: 30, money: 5000, health: 5 }, result: "你结婚了！", desc: "关系+30, ¥5000, 健康+5", value: 10, legendary: true, extra: {关系:30} });
     } else if (age < 45) {
         choices = [
             { text: "💼 专注事业", effect: { money: 15000, career: 1, health: -3 }, result: "你专注于事业发展。", desc: "¥15000, 职级+1", value: 5 },
             { text: "👨‍👩‍👧 结婚生子", effect: { relationship: 10 }, result: "你组成了家庭！", desc: "关系+10", value: 5, extra: {关系:10} },
             { text: "📈 投资理财", effect: { money: Math.floor(Math.random() * 8000 - 2000) }, result: "投资收益不确定。", desc: "有风险", value: 5 },
-            { text: "🏃 锻炼身体", effect: { health: 5 }, result: "你坚持锻炼！", desc: "健康+5", value: 5 }
+            { text: "🏃 锻炼身体", effect: { health: 8 }, result: "你坚持锻炼！", desc: "健康+8", value: 5 }
         ];
-        // 稀有：金钱>=50000
-        if (gameState.money >= 50000) choices.push({ text: "🏭 创业", effect: { money: -30000, fame: 15, career: 3 }, result: "你创办了自己的公司！", desc: "¥30000, 声望+15, 职级+3", value: 10, legendary: true, extra: {声望:15} });
+        // 稀有：金钱>=30000（原50000）
+        if (gameState.money >= 30000) choices.push({ text: "🏭 创业", effect: { money: -20000, fame: 15, career: 3 }, result: "你创办了自己的公司！", desc: "¥20000, 声望+15, 职级+3", value: 10, legendary: true, extra: {声望:15} });
     } else if (age < 60) {
         choices = [
             { text: "💼 稳定工作", effect: { money: 10000, health: -2 }, result: "你工作稳定。", desc: "¥10000, 健康-2", value: 5 },
             { text: "👨‍👩‍👧 照顾家庭", effect: { relationship: 5, health: 3 }, result: "你享受天伦之乐。", desc: "关系+5, 健康+3", value: 5, extra: {关系:5} },
             { text: "📚 继续学习", effect: { intelligence: 5 }, result: "你学习新技能。", desc: "智力+5", value: 5 },
-            { text: "🏃 养生保健", effect: { health: 5 }, result: "你注重养生。", desc: "健康+5", value: 5 }
+            { text: "🏃 养生保健", effect: { health: 8 }, result: "你注重养生。", desc: "健康+8", value: 5 }
         ];
     } else {
+        // 老年人：增加退休金选项
         choices = [
+            { text: "💰 领取退休金", effect: { money: 5000 }, result: "你领取了退休金！", desc: "¥5000", value: 5 },
             { text: "✍️ 写回忆录", effect: { fame: 5, intelligence: 3 }, result: "你开始写回忆录。", desc: "声望+5, 智力+3", value: 5, extra: {声望:5} },
             { text: "👶 含饴弄孙", effect: { health: 5, relationship: 5 }, result: "你享受天伦之乐！", desc: "健康+5, 关系+5", value: 5, extra: {关系:5} },
-            { text: "🌍 周游世界", effect: { charm: 5 }, result: "你去周游世界！", desc: "魅力+5", value: 5 },
-            { text: "🌱 种花养草", effect: { health: 5, luck: 3 }, result: "你过起悠闲生活。", desc: "健康+5, 幸运+3", value: 5, extra: {幸运:3} }
+            { text: "🌱 种花养草", effect: { health: 8, luck: 3 }, result: "你过起悠闲生活。", desc: "健康+8, 幸运+3", value: 5, extra: {幸运:3} }
         ];
     }
     
@@ -329,6 +331,7 @@ function submitFreeChoice() {
     
     if (gameState.age < 6) effect = { health: 3, charm: 2 };
     else if (gameState.age < 18) effect = l.indexOf('学习') !== -1 ? { intelligence: 3 } : { health: 3, charm: 2 };
+    else if (gameState.age >= 60) effect = { money: 3000, health: 3 };
     else effect = l.indexOf('工作') !== -1 ? { money: 3000, career: 1 } : l.indexOf('健身') !== -1 ? { health: 5 } : { money: 1000, health: 2 };
     
     applyEffect(effect);
