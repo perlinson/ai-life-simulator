@@ -109,7 +109,7 @@ body{font-family:'Microsoft YaHei';background:#1a1a2e;color:#fff;padding:20px;ma
 </div>
 </div>
 <script>
-var gameState={age:0,life:100,health:50,money:0,intelligence:10,charm:10,luck:10,fame:0,skills:[],events:[],job:"婴儿",relationship:0,careerLevel:0,education:0,goal:"",fortune:"",extraAttrs:{},usedLegendaryChoices:[]};
+var gameState={age:0,life:100,currentChoices:[],,health:50,money:0,intelligence:10,charm:10,luck:10,fame:0,skills:[],events:[],job:"婴儿",relationship:0,careerLevel:0,education:0,goal:"",fortune:"",extraAttrs:{},usedLegendaryChoices:[]};
 var goals=["成为亿万富翁 🤑","找到真爱 💕","环游世界 🌍","改变世界 🌍","成为行业精英 💼","拥有幸福家庭 👨‍👩‍👧","活到100岁 🎂","成为知名人物 ⭐","帮助他人 🙌","实现财务自由 💰","拥有自己的公司 🏢","成为艺术家 🎨"];
 var fortunes=["今年事业运势不错 💪","健康运势下滑 ⚠️","财运亨通 💰","人际关系活跃 🤝","学习运势旺盛 📚","爱情运势来临 💕","整体平稳 🌊","挑战与机遇并存 🚀","适合休息 🧘","创造力爆发 🎨"];
 
@@ -139,6 +139,11 @@ function getAgePhase(age){
 }
 
 function getChoicesByAge(){
+    // 如果已有选项，直接返回（不重新打乱）
+    if(gameState.currentChoices && gameState.currentChoices.length>0){
+        return gameState.currentChoices;
+    }
+    
     var age=gameState.age;
     var isAdult=age>=18;
     var choices=[];
@@ -249,6 +254,8 @@ function getChoicesByAge(){
         }
     });
     
+    // 保存当前选项，不重新打乱
+    gameState.currentChoices = choices;
     return choices;
 }
 
@@ -351,6 +358,7 @@ function getDefaultResult(text){
 
 function nextYear(){
     document.getElementById('resultOverlay').style.display='none';
+    gameState.currentChoices = []; // 清除选项，下次重新生成
     gameState.age++;
     if(gameState.age>90){alert('🎮 恭喜通关！活到了'+gameState.age+'岁！');return;}
     generateFortune();
@@ -442,7 +450,7 @@ function updateUI(){
     document.getElementById('choicesList').innerHTML=html;
 }
 
-generateGoal();generateFortune();document.getElementById('submitBtn').onclick=function(){submitFreeChoice()};updateUI();
+generateGoal();generateFortune();document.getElementById('submitBtn').onclick=function(){submitFreeChoice()};gameState.currentChoices = [];updateUI();
 </script>
 </body>
 </html>
