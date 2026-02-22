@@ -114,14 +114,14 @@ var gameState={age:0,life:100,health:50,money:0,intelligence:10,charm:10,luck:10
 var goals=["成为亿万富翁 🤑","找到真爱 💕","环游世界 🌍","改变世界 🌍","成为行业精英 💼","拥有幸福家庭 👨‍👩‍👧","活到100岁 🎂","成为知名人物 ⭐","帮助他人 🙌","实现财务自由 💰","拥有自己的公司 🏢","成为艺术家 🎨"];
 var fortunes=["今年事业运势不错 💪","健康运势下滑 ⚠️","财运亨通 💰","人际关系活跃 🤝","学习运势旺盛 📚","爱情运势来临 💕","整体平稳 🌊","挑战与机遇并存 🚀","适合休息 🧘","创造力爆发 🎨"];
 
-// 稀有选项列表 - 需要更高条件才触发
+// 稀有选项 - 条件更合理
 var legendaryOptions={
-    "aosai":{text:"🏆 参加奥赛",minAge:15,condition:function(s){return s.intelligence>=80},effect:{fame:15,intelligence:10},result:"你获得省级奥赛一等奖！一战成名！"},
-    "chuangye_u":{text:"🚀 创业大赛",minAge:18,condition:function(s){return s.intelligence>=90},effect:{money:20000,fame:15},result:"你获得创业大赛冠军！获得天使投资！"},
-    "jiehun":{text:"💍 结婚",minAge:22,condition:function(s){return s.relationship>=40},effect:{relationship:50,money:10000,health:10},result:"你和TA步入婚姻的殿堂！百年好合！"},
-    "chuangye_m":{text:"🏭 创业",minAge:30,condition:function(s){return s.money>=80000},effect:{money:-50000,fame:25,career:5},result:"你创办了自己的公司！成为CEO！"},
-    "famous_book":{text:"📖 出版著作",minAge:35,condition:function(s){return s.intelligence>=100},effect:{fame:30,intelligence:5},result:"你出版了专著！成为领域权威！"},
-    "tv_star":{text:"📺 上电视",minAge:25,condition:function(s){return s.charm>=90},effect:{fame:20,money:5000},result:"你登上电视节目！成为明星！"}
+    "aosai":{text:"🏆 参加奥赛",minAge:12,condition:function(s){return s.intelligence>=60},effect:{fame:12,intelligence:8},result:"你获得省级奥赛一等奖！一战成名！"},
+    "chuangye_u":{text:"🚀 创业大赛",minAge:18,condition:function(s){return s.intelligence>=70},effect:{money:15000,fame:12},result:"你获得创业大赛冠军！获得天使投资！"},
+    "jiehun":{text:"💍 结婚",minAge:22,condition:function(s){return s.relationship>=30},effect:{relationship:40,money:8000,health:8},result:"你和TA步入婚姻的殿堂！百年好合！"},
+    "chuangye_m":{text:"🏭 创业",minAge:30,condition:function(s){return s.money>=50000},effect:{money:-30000,fame:20,career:4},result:"你创办了自己的公司！成为CEO！"},
+    "famous_book":{text:"📖 出版著作",minAge:35,condition:function(s){return s.intelligence>=80},effect:{fame:25,intelligence:5},result:"你出版了专著！成为领域权威！"},
+    "tv_star":{text:"📺 上电视",minAge:25,condition:function(s){return s.charm>=70},effect:{fame:15,money:8000},result:"你登上电视节目！成为明星！"}
 };
 
 function getAgePhase(age){if(age<3)return{name:"👶 婴儿期",npc:"妈妈",scene:"🏥",avatar:"👩"};if(age<6)return{name:"🧒 幼儿期",npc:"爸爸",scene:"🏠",avatar:"👨"};if(age<12)return{name:"🏫 小学期",npc:"老师",scene:"🏫",avatar:"👨‍🏫"};if(age<18)return{name:"📚 中学期",npc:"班主任",scene:"🏫",avatar:"👩‍🏫"};if(age<22)return{name:"🎓 大学期",npc:"学长",scene:"🏫",avatar:"👨‍🎓"};if(age<30)return{name:"💼 初职期",npc:"上司",scene:"🏢",avatar:"👨‍💼"};if(age<45)return{name:"🏢 职业期",npc:"同事",scene:"🏢",avatar:"👔"};if(age<60)return{name:"👔 中年期",npc:"朋友",scene:"🏠",avatar:"👫"};return{name:"👴 老年期",npc:"子女",scene:"🏠",avatar:"👨‍👩‍👧"}}
@@ -139,16 +139,15 @@ function getChoicesByAge(){
     }else if(age<22){
         choices=[{text:"📚 考研深造",effect:{intelligence:15}},{text:"💼 找实习",effect:{money:5000,career:2}},{text:"🎭 参加社团",effect:{charm:12}},{text:"🎮 打游戏",effect:{charm:10}},{text:"📢 参加辩论赛",effect:{fame:8,intelligence:8}},{text:"💪 健身房",effect:{health:15}}].slice(0,4)
     }else if(age<30){
-        choices=[{text:"💪 拼命工作",effect:{money:15000,career:2,health:-5}},{text:"💕 找对象",effect:{relationship:10}},{text:"📚 继续学习",effect:{intelligence:15}},{text:"🏃 养生保健",effect:{health:15}},{text:"🎬 拍短视频",effect:{fame:8,money:5000}},{text:"📖 读MBA",effect:{money:10000,intelligence:8}}].slice(0,4)
+        choices=[{text:"💪 拼命工作",effect:{money:15000,career:2,health:-3}},{text:"💕 找对象",effect:{relationship:10}},{text:"📚 继续学习",effect:{intelligence:15}},{text:"🏃 养生保健",effect:{health:15}},{text:"🎬 拍短视频",effect:{fame:8,money:5000}},{text:"📖 读MBA",effect:{money:10000,intelligence:8}}].slice(0,4)
     }else if(age<45){
-        choices=[{text:"💼 专注事业",effect:{money:25000,career:2,health:-5}},{text:"👨‍👩‍👧 结婚生子",effect:{relationship:15}},{text:"📈 投资理财",effect:{money:Math.floor(Math.random()*15000-5000)}},{text:"🏃 锻炼身体",effect:{health:15}},{text:"🎤 演讲",effect:{fame:10}},{text:"📚 考证书",effect:{intelligence:8,fame:8}}].slice(0,4)
+        choices=[{text:"💼 专注事业",effect:{money:25000,career:2,health:-3}},{text:"👨‍👩‍👧 结婚生子",effect:{relationship:15}},{text:"📈 投资理财",effect:{money:Math.floor(Math.random()*15000-5000)}},{text:"🏃 锻炼身体",effect:{health:15}},{text:"🎤 演讲",effect:{fame:10}},{text:"📚 考证书",effect:{intelligence:8,fame:8}}].slice(0,4)
     }else if(age<60){
-        choices=[{text:"💼 稳定工作",effect:{money:18000,health:-3}},{text:"👨‍👩‍👧 照顾家庭",effect:{relationship:10,health:5}},{text:"📚 继续学习",effect:{intelligence:10}},{text:"🏃 养生保健",effect:{health:15}},{text:"🎨 学绘画",effect:{charm:8,intelligence:5}},{text:"🌍 去旅行",effect:{money:10000,charm:8}}].slice(0,4)
+        choices=[{text:"💼 稳定工作",effect:{money:18000,health:-2}},{text:"👨‍👩‍👧 照顾家庭",effect:{relationship:10,health:5}},{text:"📚 继续学习",effect:{intelligence:10}},{text:"🏃 养生保健",effect:{health:15}},{text:"🎨 学绘画",effect:{charm:8,intelligence:5}},{text:"🌍 去旅行",effect:{money:10000,charm:8}}].slice(0,4)
     }else{
         choices=[{text:"💰 领取退休金",effect:{money:8000}},{text:"✍️ 写回忆录",effect:{fame:10,intelligence:5}},{text:"👶 含饴弄孙",effect:{health:10,relationship:10}},{text:"🌱 种花养草",effect:{health:15,luck:5}},{text:"🧘 打太极",effect:{health:15}},{text:"📱 学用手机",effect:{intelligence:5,charm:5}}].slice(0,4)
     }
     
-    // 添加稀有选项（满足年龄和条件，且未用过）
     for(var key in legendaryOptions){
         var opt=legendaryOptions[key];
         if(age>=opt.minAge&&opt.condition(gameState)&&gameState.usedLegendaryChoices.indexOf(key)===-1){
@@ -166,10 +165,9 @@ function getDialogue(age){var d={0:"宝贝，欢迎来到这个世界！",3:"3�
 function generateGoal(){gameState.goal=goals[Math.floor(Math.random()*goals.length)];document.getElementById('goalText').textContent=gameState.goal}
 function generateFortune(){gameState.fortune=fortunes[Math.floor(Math.random()*fortunes.length)];document.getElementById('fortuneText').textContent=gameState.fame>100?"⭐ 鸿运当头！":gameState.fortune}
 function speakText(){var utterance=new SpeechSynthesisUtterance(document.getElementById('dialogueText').textContent);utterance.lang='zh-CN';speechSynthesis.speak(utterance)}
-function applyEffect(effect){if(!effect)return;if(effect.money)gameState.money+=effect.money;if(effect.life)gameState.life+=effect.life;if(effect.health)gameState.health+=effect.health;if(effect.intelligence)gameState.intelligence+=effect.intelligence;if(effect.charm)gameState.charm+=effect.charm;if(effect.luck)gameState.luck+=effect.luck;if(effect.fame)gameState.fame+=effect.fame;if(effect.career)gameState.careerLevel+=effect.career;if(effect.relationship)gameState.relationship+=effect.relationship;gameState.money=Math.max(0,gameState.money);gameState.life=Math.max(0,Math.min(200,gameState.life));gameState.health=Math.max(0,Math.min(200,gameState.health));gameState.intelligence=Math.max(0,Math.min(200,gameState.intelligence));gameState.charm=Math.max(0,Math.min(200,gameState.charm));gameState.luck=Math.max(0,Math.min(200,gameState.luck))}
+function applyEffect(effect){if(!effect)return;if(effect.money)gameState.money+=effect.money;if(effect.life)gameState.life+=effect.life;if(effect.health)gameState.health+=(effect.health)effect.health;if(effect.intelligence)gameState.intelligence+=effect.intelligence;if(effect.charm)gameState.charm+=effect.charm;if(effect.luck)gameState.luck+=effect.luck;if(effect.fame)gameState.fame+=effect.fame;if(effect.career)gameState.careerLevel+=effect.career;if(effect.relationship)gameState.relationship+=effect.relationship;gameState.money=Math.max(0,gameState.money);gameState.life=Math.max(0,Math.min(200,gameState.life));gameState.health=Math.max(0,Math.min(200,gameState.health));gameState.intelligence=Math.max(0,Math.min(200,gameState.intelligence));gameState.charm=Math.max(0,Math.min(200,gameState.charm));gameState.luck=Math.max(0,Math.min(200,gameState.luck))}
 function checkGameOver(){if(gameState.life<=0){alert('💀 游戏结束！生命耗尽');return true}return false}
 
-// AI生成更详细生动的结果描述
 async function generateAIResult(choiceText,age,phase){
     var prompt="你是一个人生模拟游戏的叙述者。请为玩家的选择生成一段详细生动的故事描述（150-250字）。\n\n玩家"+age+"岁，处于"+phase+"。\n玩家选择了：「"+choiceText+"」\n\n要求：\n1. 描述要非常生动有趣，包含细节描写\n2. 要有人物的心理活动、情感变化\n3. 可以描写周围人的反应和环境\n4. 语言要有画面感，像在读小说\n5. 不要列出属性数字变化\n6. 用第一人称"我"来叙述\n7. 故事要有起伏，不要太平淡\n\n请直接输出故事内容，不要有任何前缀：";
     
@@ -177,12 +175,7 @@ async function generateAIResult(choiceText,age,phase){
         var response=await fetch('https://api.minimax.chat/v1/text/chatcompletion_pro',{
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-                model:"abab6.5s-chat",
-                messages:[{role:"user",content:prompt}],
-                max_tokens:400,
-                temperature:0.8
-            })
+            body:JSON.stringify({model:"abab6.5s-chat",messages:[{role:"user",content:prompt}],max_tokens:400,temperature:0.8})
         });
         var data=await response.json();
         if(data.choices&&data.choices[0]&&data.choices[0].message){
@@ -215,10 +208,7 @@ async function showResult(choice){
     document.getElementById('nextBtn').disabled=false;
 }
 
-function getDefaultResult(text,age){
-    return "你"+text+"，这一年发生了很多有趣的事情。你的生活还在继续...";
-}
-
+function getDefaultResult(text,age){return "你"+text+"，这一年发生了很多有趣的事情。你的生活还在继续...";}
 function nextYear(){document.getElementById('resultOverlay').style.display='none';gameState.age++;if(gameState.age>90){alert('🎮 恭喜通关！活到了'+gameState.age+'岁！');return}generateFortune();updateUI()}
 
 function makeChoice(index){
@@ -232,9 +222,7 @@ function makeChoice(index){
     }
     
     if(choice.extra){
-        for(var key in choice.extra){
-            gameState.extraAttrs[key]=(gameState.extraAttrs[key]||0)+choice.extra[key];
-        }
+        for(var key in choice.extra){gameState.extraAttrs[key]=(gameState.extraAttrs[key]||0)+choice.extra[key]}
     }
     
     applyEffect(choice.effect);
