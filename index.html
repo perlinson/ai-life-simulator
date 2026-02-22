@@ -11,7 +11,7 @@ body{font-family:'Microsoft YaHei';background:#1a1a2e;color:#fff;padding:20px;ma
 .goal-box{text-align:center;background:linear-gradient(135deg,rgba(0,255,136,0.1),rgba(0,204,255,0.1));padding:10px;border-radius:10px;margin-bottom:15px;border:1px solid rgba(0,255,136,0.3)}
 .goal-label{font-size:12px;color:#00ff88}
 .goal-text{font-size:14px;color:#fff}
-.fortune-box{text-align:center;background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(255,165,0,0.2));padding:8px;border-radius:10px;margin-bottom:15px;border:1px solid rgba(255,215,0,0.3)}
+.fortune-box{text-align:center;background:linear-gradient(135deg,rgba(255,215,0),rgba(255,165,0,0.2,0.2));padding:8px;border-radius:10px;margin-bottom:15px;border:1px solid rgba(255,215,0,0.3)}
 .fortune-label{font-size:12px;color:#ffd700}
 .fortune-text{font-size:13px;color:#fff}
 .status-bar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:15px}
@@ -44,12 +44,14 @@ body{font-family:'Microsoft YaHei';background:#1a1a2e;color:#fff;padding:20px;ma
 .choice-btn:disabled{opacity:0.5;cursor:not-allowed}
 .choice-btn.legendary{background:linear-gradient(135deg,rgba(255,215,0,0.3),rgba(255,165,0,0.3));border-color:#ffd700}
 .choice-btn.legendary:hover{background:linear-gradient(135deg,rgba(255,215,0,0.5),rgba(255,165,0,0.5))}
-.choice-btn.super-legendary{background:linear-gradient(135deg,rgba(148,0,211,0.3),rgba(75,0,130,0.3));border-color:#9400d3}
-.choice-btn.super-legendary:hover{background:linear-gradient(135deg,rgba(148,0,211,0.5),rgba(75,0,130,0.5))}
 .choice-desc{font-size:11px;color:#888;margin-top:3px}
 .legendary-tag{font-size:10px;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000;padding:2px 6px;border-radius:8px;margin-left:5px}
-.super-legendary-tag{font-size:10px;background:linear-gradient(135deg,#9400d3,#4b0082);color:#fff;padding:2px 6px;border-radius:8px;margin-left:5px}
 .blocked-tag{font-size:10px;background:#ff4444;color:#fff;padding:2px 6px;border-radius:8px;margin-left:5px}
+.result-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:100}
+.result-box{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:30px;border-radius:20px;text-align:center;max-width:400px;border:2px solid #00ff88}
+.result-title{font-size:24px;color:#00ff88;margin-bottom:15px}
+.result-text{font-size:16px;line-height:1.8;margin-bottom:20px}
+.result-btn{padding:12px 30px;background:linear-gradient(135deg,#00ff88,#00ccff);border:none;border-radius:10px;color:#000;font-size:16px;font-weight:bold;cursor:pointer}
 .free-input{margin-top:15px}
 .free-input input{width:100%;padding:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff}
 .free-input button{margin-top:8px;padding:10px 20px;background:#00ff88;border:none;border-radius:8px;color:#000;font-weight:bold;cursor:pointer}
@@ -59,17 +61,8 @@ body{font-family:'Microsoft YaHei';background:#1a1a2e;color:#fff;padding:20px;ma
 <div class="game-container">
 <div class="year-display" id="yearDisplay">🎂 第 0 年</div>
 <div class="age-phase" id="agePhase">👶 婴儿期</div>
-
-<div class="goal-box">
-<div class="goal-label">🎯 人生目标</div>
-<div class="goal-text" id="goalText">随机生成中...</div>
-</div>
-
-<div class="fortune-box">
-<div class="fortune-label">🔮 今年运势</div>
-<div class="fortune-text" id="fortuneText">点击查看</div>
-</div>
-
+<div class="goal-box"><div class="goal-label">🎯 人生目标</div><div class="goal-text" id="goalText">随机生成中...</div></div>
+<div class="fortune-box"><div class="fortune-label">🔮 今年运势</div><div class="fortune-text" id="fortuneText">点击查看</div></div>
 <div class="status-bar">
 <div class="stat-item"><div class="stat-label">❤️ 生命</div><div class="stat-value" id="life">100</div><div class="stat-bar"><div class="stat-fill" id="lifeBar" style="width:100%;background:#ff4444"></div></div></div>
 <div class="stat-item"><div class="stat-label">💚 健康</div><div class="stat-value" id="health">100</div><div class="stat-bar"><div class="stat-fill" id="healthBar" style="width:100%;background:#00ff88"></div></div></div>
@@ -79,9 +72,7 @@ body{font-family:'Microsoft YaHei';background:#1a1a2e;color:#fff;padding:20px;ma
 <div class="stat-item"><div class="stat-label">🍀 幸运</div><div class="stat-value" id="luck">50</div><div class="stat-bar"><div class="stat-fill" id="luckBar" style="width:50%;background:#ffd700"></div></div></div>
 <div class="stat-item"><div class="stat-label">⭐ 声望</div><div class="stat-value" id="fame">0</div></div>
 </div>
-
 <div class="extra-attrs" id="extraAttrs"></div>
-
 <div class="main-area">
 <div class="left-panel">
 <div class="avatar" id="avatar">👶</div>
@@ -109,302 +100,31 @@ body{font-family:'Microsoft YaHei';background:#1a1a2e;color:#fff;padding:20px;ma
 </div>
 </div>
 </div>
-
+<div class="result-overlay" id="resultOverlay" style="display:none">
+<div class="result-box">
+<div class="result-title" id="resultTitle">📝 今年发生了什么</div>
+<div class="result-text" id="resultText"></div>
+<button class="result-btn" onclick="nextYear()">进入下一年 ➡️</button>
+</div>
+</div>
 <script>
-var gameState = {
-    age: 0,
-    life: 100,
-    health: 100,
-    money: 0,
-    intelligence: 50,
-    charm: 50,
-    luck: 50,
-    fame: 0,
-    skills: [],
-    events: [],
-    job: "婴儿",
-    relationship: 0,
-    careerLevel: 0,
-    education: 0,
-    goal: "",
-    fortune: "",
-    extraAttrs: {}
-};
-
-var goals = ["成为亿万富翁 🤑", "找到真爱 💕", "环游世界 🌍", "改变世界 🌍", "成为行业精英 💼", "拥有幸福家庭 👨‍👩‍👧", "活到100岁 🎂", "成为知名人物 ⭐", "帮助他人 🙌", "实现财务自由 💰", "拥有自己的公司 🏢", "成为艺术家 🎨"];
-var fortunes = ["今年事业运势不错 💪", "健康运势下滑 ⚠️", "财运亨通 💰", "人际关系活跃 🤝", "学习运势旺盛 📚", "爱情运势来临 💕", "整体平稳 🌊", "挑战与机遇并存 🚀", "适合休息 🧘", "创造力爆发 🎨"];
-
-function getAgePhase(age) {
-    if (age < 3) return { name: "👶 婴儿期", npc: "妈妈", scene: "🏥", avatar: "👩" };
-    if (age < 6) return { name: "🧒 幼儿期", npc: "爸爸", scene: "🏠", avatar: "👨" };
-    if (age < 12) return { name: "🏫 小学期", npc: "老师", scene: "🏫", avatar: "👨‍🏫" };
-    if (age < 18) return { name: "📚 中学期", npc: "班主任", scene: "🏫", avatar: "👩‍🏫" };
-    if (age < 22) return { name: "🎓 大学期", npc: "学长", scene: "🏫", avatar: "👨‍🎓" };
-    if (age < 30) return { name: "💼 初职期", npc: "上司", scene: "🏢", avatar: "👨‍💼" };
-    if (age < 45) return { name: "🏢 职业期", npc: "同事", scene: "🏢", avatar: "👔" };
-    if (age < 60) return { name: "👔 中年期", npc: "朋友", scene: "🏠", avatar: "👫" };
-    return { name: "👴 老年期", npc: "子女", scene: "🏠", avatar: "👨‍👩‍👧" };
-}
-
-// v3优化版：1.降低稀有触发条件 2.增加健康恢复选项 3.老年人有退休金
-function getChoicesByAge() {
-    var age = gameState.age;
-    var isAdult = age >= 18;
-    var isElderly = age >= 60;  // 老年人
-    var choices = [];
-    
-    if (age < 3) {
-        choices = [
-            { text: "😊 健康成长", effect: { health: 5 }, result: "你健康成长着！", desc: "健康+5", value: 5 },
-            { text: "😢 哭闹表达", effect: { charm: 5 }, result: "你用哭闹来表达需求。", desc: "魅力+5", value: 5 },
-            { text: "😴 安静睡觉", effect: { health: 5 }, result: "你大部分时间在睡觉。", desc: "健康+5", value: 5 },
-            { text: "👀 好奇观察", effect: { intelligence: 3, luck: 2 }, result: "你好奇地观察世界。", desc: "智力+3, 幸运+2", value: 5, extra: {幸运:2} }
-        ];
-    } else if (age < 6) {
-        choices = [
-            { text: "🚗 玩玩具车", effect: { intelligence: 5 }, result: "你对机械玩具爱不释手！", desc: "智力+5", value: 5 },
-            { text: "🎨 画画", effect: { intelligence: 3, charm: 2 }, result: "你最喜欢涂画。", desc: "智力+3, 魅力+2", value: 5 },
-            { text: "👫 交小朋友", effect: { charm: 5 }, result: "你交到了好朋友！", desc: "魅力+5", value: 5 },
-            { text: "📖 听故事", effect: { intelligence: 3, luck: 2 }, result: "你沉浸在故事中。", desc: "智力+3, 幸运+2", value: 5, extra: {幸运:2} }
-        ];
-    } else if (age < 12) {
-        choices = [
-            { text: "📐 学数学", effect: { intelligence: 5 }, result: "你展现了数学天赋！", desc: "智力+5", value: 5 },
-            { text: "📚 读课外书", effect: { intelligence: 3, luck: 2 }, result: "你读了很多课外书。", desc: "智力+3, 幸运+2", value: 5, extra: {幸运:2} },
-            { text: "⚽ 踢足球", effect: { health: 5 }, result: "你成了足球队主力！", desc: "健康+5", value: 5 },
-            { text: "🎵 学钢琴", effect: { charm: 5 }, result: "你学会了弹钢琴！", desc: "魅力+5", value: 5 }
-        ];
-    } else if (age < 18) {
-        choices = [
-            { text: "📖 努力学习", effect: { intelligence: 5 }, result: "你成绩优异！", desc: "智力+5", value: 5 },
-            { text: "🏀 打篮球", effect: { health: 5 }, result: "你成了篮球队长！", desc: "健康+5", value: 5 },
-            { text: "💕 谈恋爱", effect: { charm: 3, relationship: 2 }, result: "你开始了恋情。", desc: "魅力+3, 关系+2", value: 5, extra: {关系:2} },
-            { text: "🎮 玩游戏", effect: { charm: 5, intelligence: -3 }, result: "你沉迷游戏。", desc: "魅力+5, 智力-3", value: 2 }
-        ];
-        // 稀有选项：智力>=50（原60）
-        if (gameState.intelligence >= 50) choices.push({ text: "🏆 参加奥赛", effect: { fame: 8, intelligence: 5 }, result: "你获得奥赛奖牌！", desc: "声望+8, 智力+5", value: 10, legendary: true, extra: {声望:8} });
-    } else if (age < 22) {
-        choices = [
-            { text: "📚 考研深造", effect: { intelligence: 5 }, result: "你决定考研！", desc: "智力+5", value: 5 },
-            { text: "💼 找实习", effect: { money: 3000, career: 1 }, result: "你找到了实习。", desc: "¥3000, 职级+1", value: 5, extra: {经验:1} },
-            { text: "🎭 参加社团", effect: { charm: 5 }, result: "你认识了很多朋友！", desc: "魅力+5", value: 5 },
-            { text: "🎮 打游戏", effect: { charm: 5 }, result: "你享受大学生活。", desc: "魅力+5", value: 5 }
-        ];
-        // 稀有：智力>=60（原70）
-        if (gameState.intelligence >= 60) choices.push({ text: "🚀 创业大赛", effect: { money: 10000, fame: 8 }, result: "你获得创业大赛冠军！", desc: "¥10000, 声望+8", value: 10, legendary: true, extra: {声望:8} });
-    } else if (age < 30) {
-        choices = [
-            { text: "💪 拼命工作", effect: { money: 8000, career: 1, health: -3 }, result: "你拼命工作！", desc: "¥8000, 职级+1, 健康-3", value: 5 },
-            { text: "💕 找对象", effect: { relationship: 5 }, result: "你找到了另一半！", desc: "关系+5", value: 5, extra: {关系:5} },
-            { text: "📚 继续学习", effect: { intelligence: 5 }, result: "你考取了证书！", desc: "智力+5", value: 5 },
-            { text: "🏃 养生保健", effect: { health: 8 }, result: "你注重养生！", desc: "健康+8", value: 5 }
-        ];
-        // 稀有：关系>=15（原30）
-        if (gameState.relationship >= 15) choices.push({ text: "💍 结婚", effect: { relationship: 30, money: 5000, health: 5 }, result: "你结婚了！", desc: "关系+30, ¥5000, 健康+5", value: 10, legendary: true, extra: {关系:30} });
-    } else if (age < 45) {
-        choices = [
-            { text: "💼 专注事业", effect: { money: 15000, career: 1, health: -3 }, result: "你专注于事业发展。", desc: "¥15000, 职级+1", value: 5 },
-            { text: "👨‍👩‍👧 结婚生子", effect: { relationship: 10 }, result: "你组成了家庭！", desc: "关系+10", value: 5, extra: {关系:10} },
-            { text: "📈 投资理财", effect: { money: Math.floor(Math.random() * 8000 - 2000) }, result: "投资收益不确定。", desc: "有风险", value: 5 },
-            { text: "🏃 锻炼身体", effect: { health: 8 }, result: "你坚持锻炼！", desc: "健康+8", value: 5 }
-        ];
-        // 稀有：金钱>=30000（原50000）
-        if (gameState.money >= 30000) choices.push({ text: "🏭 创业", effect: { money: -20000, fame: 15, career: 3 }, result: "你创办了自己的公司！", desc: "¥20000, 声望+15, 职级+3", value: 10, legendary: true, extra: {声望:15} });
-    } else if (age < 60) {
-        choices = [
-            { text: "💼 稳定工作", effect: { money: 10000, health: -2 }, result: "你工作稳定。", desc: "¥10000, 健康-2", value: 5 },
-            { text: "👨‍👩‍👧 照顾家庭", effect: { relationship: 5, health: 3 }, result: "你享受天伦之乐。", desc: "关系+5, 健康+3", value: 5, extra: {关系:5} },
-            { text: "📚 继续学习", effect: { intelligence: 5 }, result: "你学习新技能。", desc: "智力+5", value: 5 },
-            { text: "🏃 养生保健", effect: { health: 8 }, result: "你注重养生。", desc: "健康+8", value: 5 }
-        ];
-    } else {
-        // 老年人：增加退休金选项
-        choices = [
-            { text: "💰 领取退休金", effect: { money: 5000 }, result: "你领取了退休金！", desc: "¥5000", value: 5 },
-            { text: "✍️ 写回忆录", effect: { fame: 5, intelligence: 3 }, result: "你开始写回忆录。", desc: "声望+5, 智力+3", value: 5, extra: {声望:5} },
-            { text: "👶 含饴弄孙", effect: { health: 5, relationship: 5 }, result: "你享受天伦之乐！", desc: "健康+5, 关系+5", value: 5, extra: {关系:5} },
-            { text: "🌱 种花养草", effect: { health: 8, luck: 3 }, result: "你过起悠闲生活。", desc: "健康+8, 幸运+3", value: 5, extra: {幸运:3} }
-        ];
-    }
-    
-    // 过滤金钱为负的选项（未成年）
-    choices = choices.filter(function(c) {
-        if (!isAdult && c.effect.money && c.effect.money < 0) return false;
-        return true;
-    });
-    
-    // 标记会导致金钱为负的选项
-    choices.forEach(function(c) {
-        if (c.effect.money && c.effect.money < 0 && gameState.money + c.effect.money < 0) {
-            c.blocked = true;
-        }
-    });
-    
-    return choices;
-}
-
-function getCurrentEvent() {
-    var phase = getAgePhase(gameState.age);
-    return {
-        npc: phase.npc,
-        scene: phase.scene,
-        avatar: phase.avatar,
-        dialogue: getDialogue(gameState.age),
-        choices: getChoicesByAge()
-    };
-}
-
-function getDialogue(age) {
-    var d = { 0: "宝贝，欢迎来到这个世界！", 3: "3岁了，该上幼儿园了。", 6: "上小学了！", 12: "上初中了。", 15: "高中了！", 18: "成年了。", 22: "大学毕业了。", 30: "30而立之年。", 40: "40不惑之年。", 50: "50知天命。", 60: "60花甲，该退休了。" };
-    for (var i = age; i >= 0; i--) if (d[i]) return d[i];
-    return "今年你" + age + "岁了...";
-}
-
-function generateGoal() { gameState.goal = goals[Math.floor(Math.random() * goals.length)]; document.getElementById('goalText').textContent = gameState.goal; }
-function generateFortune() { gameState.fortune = fortunes[Math.floor(Math.random() * fortunes.length)]; document.getElementById('fortuneText').textContent = gameState.fame > 100 ? "⭐ 鸿运当头！" : gameState.fortune; }
-
-function speakText() {
-    var utterance = new SpeechSynthesisUtterance(document.getElementById('dialogueText').textContent);
-    utterance.lang = 'zh-CN';
-    speechSynthesis.speak(utterance);
-}
-
-function applyEffect(effect) {
-    if (!effect) return;
-    if (effect.money) gameState.money += effect.money;
-    if (effect.life) gameState.life += effect.life;
-    if (effect.health) gameState.health += effect.health;
-    if (effect.intelligence) gameState.intelligence += effect.intelligence;
-    if (effect.charm) gameState.charm += effect.charm;
-    if (effect.luck) gameState.luck += effect.luck;
-    if (effect.fame) gameState.fame += effect.fame;
-    if (effect.career) gameState.careerLevel += effect.career;
-    if (effect.relationship) gameState.relationship += effect.relationship;
-    if (effect.education) gameState.education += effect.education;
-    if (effect.job) gameState.job = effect.job;
-    if (effect.skill && gameState.skills.indexOf(effect.skill) === -1) gameState.skills.push(effect.skill);
-    
-    gameState.money = Math.max(0, gameState.money);
-    gameState.life = Math.max(0, Math.min(100, gameState.life));
-    gameState.health = Math.max(0, Math.min(100, gameState.health));
-    gameState.intelligence = Math.max(0, Math.min(100, gameState.intelligence));
-    gameState.charm = Math.max(0, Math.min(100, gameState.charm));
-    gameState.luck = Math.max(0, Math.min(100, gameState.luck));
-}
-
-function checkGameOver() {
-    if (gameState.life <= 0) { alert('💀 游戏结束！生命耗尽'); return true; }
-    return false;
-}
-
-function makeChoice(index) {
-    var choices = getChoicesByAge();
-    if (index >= choices.length || index < 0) return;
-    var choice = choices[index];
-    
-    if (choice.blocked) {
-        alert('⚠️ 金钱不足，无法选择此选项！');
-        return;
-    }
-    
-    if (choice.extra) {
-        for (var key in choice.extra) {
-            gameState.extraAttrs[key] = (gameState.extraAttrs[key] || 0) + choice.extra[key];
-        }
-    }
-    
-    applyEffect(choice.effect);
-    gameState.events.push({ age: gameState.age, event: choice.text });
-    if (checkGameOver()) return;
-    gameState.age++;
-    if (gameState.age > 90) { alert('🎮 恭喜通关！活到了' + gameState.age + '岁！'); return; }
-    generateFortune();
-    updateUI();
-}
-
-function submitFreeChoice() {
-    var input = document.getElementById('freeInput');
-    if (!input || !input.value.trim()) { alert('请输入你的想法！'); return; }
-    var text = input.value.trim();
-    var l = text.toLowerCase();
-    var effect = {}, result = "";
-    
-    if (gameState.age < 6) effect = { health: 3, charm: 2 };
-    else if (gameState.age < 18) effect = l.indexOf('学习') !== -1 ? { intelligence: 3 } : { health: 3, charm: 2 };
-    else if (gameState.age >= 60) effect = { money: 3000, health: 3 };
-    else effect = l.indexOf('工作') !== -1 ? { money: 3000, career: 1 } : l.indexOf('健身') !== -1 ? { health: 5 } : { money: 1000, health: 2 };
-    
-    applyEffect(effect);
-    gameState.events.push({ age: gameState.age, event: text });
-    if (checkGameOver()) return;
-    gameState.age++;
-    if (gameState.age > 90) { alert('🎮 恭喜通关！'); return; }
-    generateFortune();
-    updateUI();
-}
-
-function updateUI() {
-    var phase = getAgePhase(gameState.age);
-    document.getElementById('yearDisplay').textContent = '🎂 第 ' + gameState.age + ' 年';
-    document.getElementById('agePhase').textContent = phase.name;
-    document.getElementById('life').textContent = gameState.life + '/100';
-    document.getElementById('health').textContent = gameState.health + '/100';
-    document.getElementById('money').textContent = '¥' + gameState.money.toLocaleString();
-    document.getElementById('intelligence').textContent = gameState.intelligence + '/100';
-    document.getElementById('charm').textContent = gameState.charm + '/100';
-    document.getElementById('luck').textContent = gameState.luck + '/100';
-    document.getElementById('fame').textContent = gameState.fame;
-    
-    document.getElementById('lifeBar').style.width = gameState.life + '%';
-    document.getElementById('healthBar').style.width = gameState.health + '%';
-    document.getElementById('intBar').style.width = gameState.intelligence + '%';
-    document.getElementById('charmBar').style.width = gameState.charm + '%';
-    document.getElementById('luckBar').style.width = gameState.luck + '%';
-    
-    var extraHtml = '';
-    var extraKeys = Object.keys(gameState.extraAttrs);
-    if (extraKeys.length > 0) {
-        extraKeys.forEach(function(key) {
-            var val = gameState.extraAttrs[key];
-            var label = { '关系': '💕', '经验': '📚', '声望': '⭐', '教育': '🎓' }[key] || key;
-            extraHtml += '<span class="extra-attr">' + label + ' ' + key + ': <span>' + val + '</span></span>';
-        });
-    }
-    document.getElementById('extraAttrs').innerHTML = extraHtml;
-    
-    var avatars = ["👶","👶","👶","🧒","🧒","🧒","👦","👦","👦","👦","👦","👦","🧑","🧑","🧑","🧑","🧑","🧑","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👴"];
-    var names = ["婴儿","婴儿","婴儿","幼儿","幼儿","幼儿","儿童","儿童","儿童","儿童","儿童","儿童","少年","少年","少年","少年","少年","少年","青年","青年","青年","青年","青年","青年","中年","中年","中年","中年","中年","中年","老年"];
-    document.getElementById('avatar').textContent = avatars[Math.min(gameState.age, avatars.length - 1)] || "👨";
-    document.getElementById('charName').textContent = names[Math.min(gameState.age, names.length - 1)] || "成人";
-    document.getElementById('charInfo').textContent = gameState.age + '岁 · ' + gameState.job;
-    
-    document.getElementById('skillsList').innerHTML = gameState.skills.length ? gameState.skills.map(function(s) { return '<span class="skill-tag">' + s + '</span>'; }).join('') : '<span class="skill-tag">无</span>';
-    document.getElementById('eventLog').innerHTML = gameState.events.slice(-5).map(function(e) { return '<div>🌟 ' + e.age + '岁 - ' + e.event + '</div>'; }).join('');
-    
-    var evt = getCurrentEvent();
-    document.getElementById('sceneImage').textContent = evt.scene;
-    document.getElementById('npcAvatar').innerHTML = evt.avatar + '<div class="speak-btn" onclick="speakText()">🔊</div>';
-    document.getElementById('npcName').textContent = evt.npc;
-    document.getElementById('dialogueText').textContent = evt.dialogue;
-    
-    var choices = getChoicesByAge();
-    document.getElementById('choicesList').innerHTML = choices.map(function(c, i) {
-        var cls = 'choice-btn';
-        if (c.legendary) cls += ' legendary';
-        if (c.superLegendary) cls += ' super-legendary';
-        if (c.blocked) cls += ' blocked';
-        var tags = '';
-        if (c.legendary) tags += '<span class="legendary-tag">⭐ 稀有</span>';
-        if (c.superLegendary) tags += '<span class="super-legendary-tag">💜 超稀有</span>';
-        if (c.blocked) tags += '<span class="blocked-tag">🚫 金钱不足</span>';
-        return '<button class="' + cls + '" onclick="makeChoice(' + i + ')" ' + (c.blocked ? 'disabled' : '') + '>' + c.text + tags + '<div class="choice-desc">' + c.desc + '</div></button>';
-    }).join('');
-}
-
-generateGoal();
-generateFortune();
-document.getElementById('submitBtn').onclick = function() { submitFreeChoice(); };
-updateUI();
+var gameState={age:0,life:100,health:100,money:0,intelligence:50,charm:50,luck:50,fame:0,skills:[],events:[],job:"婴儿",relationship:0,careerLevel:0,education:0,goal:"",fortune:"",extraAttrs:{},usedLegendaryChoices:[]};
+var goals=["成为亿万富翁 🤑","找到真爱 💕","环游世界 🌍","改变世界 🌍","成为行业精英 💼","拥有幸福家庭 👨‍👩‍👧","活到100岁 🎂","成为知名人物 ⭐","帮助他人 🙌","实现财务自由 💰","拥有自己的公司 🏢","成为艺术家 🎨"];
+var fortunes=["今年事业运势不错 💪","健康运势下滑 ⚠️","财运亨通 💰","人际关系活跃 🤝","学习运势旺盛 📚","爱情运势来临 💕","整体平稳 🌊","挑战与机遇并存 🚀","适合休息 🧘","创造力爆发 🎨"];
+function getAgePhase(age){if(age<3)return{name:"👶 婴儿期",npc:"妈妈",scene:"🏥",avatar:"👩"};if(age<6)return{name:"🧒 幼儿期",npc:"爸爸",scene:"🏠",avatar:"👨"};if(age<12)return{name:"🏫 小学期",npc:"老师",scene:"🏫",avatar:"👨‍🏫"};if(age<18)return{name:"📚 中学期",npc:"班主任",scene:"🏫",avatar:"👩‍🏫"};if(age<22)return{name:"🎓 大学期",npc:"学长",scene:"🏫",avatar:"👨‍🎓"};if(age<30)return{name:"💼 初职期",npc:"上司",scene:"🏢",avatar:"👨‍💼"};if(age<45)return{name:"🏢 职业期",npc:"同事",scene:"🏢",avatar:"👔"};if(age<60)return{name:"👔 中年期",npc:"朋友",scene:"🏠",avatar:"👫"};return{name:"👴 老年期",npc:"子女",scene:"🏠",avatar:"👨‍👩‍👧"}}
+function getChoicesByAge(){var age=gameState.age,isAdult=age>=18,isElderly=age>=60,choices=[];if(age<3){choices=[{text:"😊 健康成长",effect:{health:5},result:"你健康成长着，小身体棒棒的！"},{text:"😢 哭闹表达",effect:{charm:5},result:"你用哭闹来表达需求，爸爸妈妈都很照顾你。"},{text:"😴 安静睡觉",effect:{health:5},result:"你大部分时间在睡觉，长身体呢。"},{text:"👀 好奇观察",effect:{intelligence:3,luck:2},result:"你好奇地观察这个新奇的世界。"},{text:"🍼 认真吃奶",effect:{health:5},result:"你认真地吃奶，长得白白胖胖的。"},{text:"😄 经常笑",effect:{charm:5,luck:2},result:"你总是笑眯眯的，大家都很喜欢你。"}].slice(0,4)}else if(age<6){choices=[{text:"🚗 玩玩具车",effect:{intelligence:5},result:"你对各种机械玩具爱不释手！"},{text:"🎨 画画",effect:{intelligence:3,charm:2},result:"你最喜欢涂涂画画。"},{text:"👫 交小朋友",effect:{charm:5},result:"你交到了第一个好朋友！"},{text:"📖 听故事",effect:{intelligence:3,luck:2},result:"你沉浸在精彩的故事中。"},{text:"🎵 听儿歌",effect:{charm:3,intelligence:2},result:"你跟着儿歌手舞足蹈。"},{text:"🏃 户外活动",effect:{health:5},result:"你在公园里跑跑跳跳很开心。"}].slice(0,4)}else if(age<12){choices=[{text:"📐 学数学",effect:{intelligence:5},result:"你展现了惊人的数学天赋！"},{text:"📚 读课外书",effect:{intelligence:3,luck:2},result:"你读了很多有趣的课外书。"},{text:"⚽ 踢足球",effect:{health:5},result:"你成了班足球队的主力！"},{text:"🎵 学钢琴",effect:{charm:5},result:"你学会了弹简单的曲子！"},{text:"✏️ 练书法",effect:{intelligence:3,charm:2},result:"你写出了一手好字。"},{text:"🔬 做实验",effect:{intelligence:5},result:"你迷上了科学小实验。"}].slice(0,4)}else if(age<18){choices=[{text:"📖 努力学习",effect:{intelligence:5},result:"你成绩优异，是老师眼中的好学生！"},{text:"🏀 打篮球",effect:{health:5},result:"你成了篮球队长，带领球队获胜！"},{text:"💕 谈恋爱",effect:{charm:3,relationship:2},result:"你开始了第一段美好的恋情。"},{text:"🎮 玩游戏",effect:{charm:5,intelligence:-3},result:"你沉迷游戏，成绩下滑了。"},{text:"📝 参加社团",effect:{charm:3,intelligence:2},result:"你参加了学校的文学社。"},{text:"🏃 跑步锻炼",effect:{health:5},result:"你养成了每天跑步的好习惯。"}].slice(0,4);if(gameState.intelligence>=50&&gameState.usedLegendaryChoices.indexOf("aosai_"+age)===-1)choices.push({text:"🏆 参加奥赛",effect:{fame:8,intelligence:5},result:"你获得省级奥赛一等奖！一战成名！",legendary:true,key:"aosai_"+age})}else if(age<22){choices=[{text:"📚 考研深造",effect:{intelligence:5},result:"你决定继续深造，备战考研！"},{text:"💼 找实习",effect:{money:3000,career:1},result:"你找到了知名公司的实习机会。"},{text:"🎭 参加社团",effect:{charm:5},result:"你认识了非常多志同道合的朋友！"},{text:"🎮 打游戏",effect:{charm:5},result:"你享受着美好的大学生活。"},{text:"📢 参加辩论赛",effect:{fame:3,intelligence:3},result:"你在辩论赛上舌战群儒。"},{text:"💪 健身房",effect:{health:5},result:"你练出了健美的身材。"}].slice(0,4);if(gameState.intelligence>=60&&gameState.usedLegendaryChoices.indexOf("chuangye_"+age)===-1)choices.push({text:"🚀 创业大赛",effect:{money:10000,fame:8},result:"你获得创业大赛冠军！获得天使投资！",legendary:true,key:"chuangye_"+age})}else if(age<30){choices=[{text:"💪 拼命工作",effect:{money:8000,career:1,health:-3},result:"你拼命工作，业绩突出，老板很赏识你！"},{text:"💕 找对象",effect:{relationship:5},result:"你遇到了心仪的TA，坠入爱河！"},{text:"📚 继续学习",effect:{intelligence:5},result:"你考取了专业资格证书！"},{text:"🏃 养生保健",effect:{health:8},result:"你注重养生，身体越来越棒。"},{text:"🎬 拍短视频",effect:{fame:3,money:2000},result:"你成了小有名气的网红！"},{text:"📖 读MBA",effect:{money:5000,intelligence:3},result:"你重返校园读MBA。"}].slice(0,4);if(gameState.relationship>=15&&gameState.usedLegendaryChoices.indexOf("jiehun_"+age)===-1)choices.push({text:"💍 结婚",effect:{relationship:30,money:5000,health:5},result:"你和TA步入婚姻的殿堂！百年好合！",legendary:true,key:"jiehun_"+age})}else if(age<45){choices=[{text:"💼 专注事业",effect:{money:15000,career:1,health:-3},result:"你专注于事业发展，步步高升！"},{text:"👨‍👩‍👧 结婚生子",effect:{relationship:10},result:"你组成了幸福的三口之家！"},{text:"📈 投资理财",effect:{money:Math.floor(Math.random()*8000-2000)},result:"投资收益有盈亏，需要谨慎。"},{text:"🏃 锻炼身体",effect:{health:8},result:"你坚持每周锻炼，身体棒棒的。"},{text:"🎤 演讲",effect:{fame:5},result:"你在行业论坛上演讲，获得掌声。"},{text:"📚 考证书",effect:{intelligence:3,fame:3},result:"你考取了行业顶级证书。"}].slice(0,4);if(gameState.money>=30000&&gameState.usedLegendaryChoices.indexOf("chuangye2_"+age)===-1)choices.push({text:"🏭 创业",effect:{money:-20000,fame:15,career:3},result:"你创办了自己的公司！成为CEO！",legendary:true,key:"chuangye2_"+age})}else if(age<60){choices=[{text:"💼 稳定工作",effect:{money:10000,health:-2},result:"你工作稳定，是公司的中坚力量。"},{text:"👨‍👩‍👧 照顾家庭",effect:{relationship:5,health:3},result:"你花更多时间陪伴家人。"},{text:"📚 继续学习",effect:{intelligence:5},result:"你保持学习，紧跟时代。"},{text:"🏃 养生保健",effect:{health:8},result:"你注重养生，身体状态良好。"},{text:"🎨 学绘画",effect:{charm:3,intelligence:2},result:"你开始学习油画。"},{text:"🌍 去旅行",effect:{money:5000,charm:3},result:"你去了向往已久的旅行。"}].slice(0,4)}else{choices=[{text:"💰 领取退休金",effect:{money:5000},result:"你每月领取退休金，生活有保障。"},{text:"✍️ 写回忆录",effect:{fame:5,intelligence:3},result:"你开始写回忆录，记录精彩人生。"},{text:"👶 含饴弄孙",effect:{health:5,relationship:5},result:"你享受天伦之乐，孙子孙女绕膝。"},{text:"🌱 种花养草",effect:{health:8,luck:3},result:"你过起悠闲的退休生活。"},{text:"🧘 打太极",effect:{health:8},result:"你每天打太极，身体硬朗。"},{text:"📱 学用手机",effect:{intelligence:3,charm:2},result:"你学会了用智能手机。"}].slice(0,4)}choices=choices.filter(function(c){if(!isAdult&&c.effect.money&&c.effect.money<0)return false;return true});choices.forEach(function(c){if(c.effect.money&&c.effect.money<0&&gameState.money+c.effect.money<0){c.blocked=true}});return choices}
+function getCurrentEvent(){var phase=getAgePhase(gameState.age);return{npc:phase.npc,scene:phase.scene,avatar:phase.avatar,dialogue:getDialogue(gameState.age),choices:getChoicesByAge()}}
+function getDialogue(age){var d={0:"宝贝，欢迎来到这个世界！",3:"3岁了，该上幼儿园了。",6:"上小学了，要开始学习了！",12:"上初中了，进入青春期。",15:"高中了，要考大学了！",18:"成年了，要做人生选择了。",22:"大学毕业了，要开始工作了。",30:"30而立之年，家庭事业都要兼顾。",40:"40不惑之年，人生过了大半了。",50:"50知天命，该退休了。",60:"60花甲，该享受生活了。"};for(var i=age;i>=0;i--)if(d[i])return d[i];return"今年你"+age+"岁了..."}
+function generateGoal(){gameState.goal=goals[Math.floor(Math.random()*goals.length)];document.getElementById('goalText').textContent=gameState.goal}
+function generateFortune(){gameState.fortune=fortunes[Math.floor(Math.random()*fortunes.length)];document.getElementById('fortuneText').textContent=gameState.fame>100?"⭐ 鸿运当头！":gameState.fortune}
+function speakText(){var utterance=new SpeechSynthesisUtterance(document.getElementById('dialogueText').textContent);utterance.lang='zh-CN';speechSynthesis.speak(utterance)}
+function applyEffect(effect){if(!effect)return;if(effect.money)gameState.money+=effect.money;if(effect.life)gameState.life+=effect.life;if(effect.health)gameState.health+=effect.health;if(effect.intelligence)gameState.intelligence+=effect.intelligence;if(effect.charm)gameState.charm+=effect.charm;if(effect.luck)gameState.luck+=effect.luck;if(effect.fame)gameState.fame+=effect.fame;if(effect.career)gameState.careerLevel+=effect.career;if(effect.relationship)gameState.relationship+=effect.relationship;if(effect.education)gameState.education+=effect.education;if(effect.job)gameState.job=effect.job;if(effect.skill&&gameState.skills.indexOf(effect.skill)===-1)gameState.skills.push(effect.skill);gameState.money=Math.max(0,gameState.money);gameState.life=Math.max(0,Math.min(100,gameState.life));gameState.health=Math.max(0,Math.min(100,gameState.health));gameState.intelligence=Math.max(0,Math.min(100,gameState.intelligence));gameState.charm=Math.max(0,Math.min(100,gameState.charm));gameState.luck=Math.max(0,Math.min(100,gameState.luck))}
+function checkGameOver(){if(gameState.life<=0){alert('💀 游戏结束！生命耗尽');return true}return false}
+function showResult(resultText){document.getElementById('resultText').textContent=resultText;document.getElementById('resultOverlay').style.display='flex'}
+function nextYear(){document.getElementById('resultOverlay').style.display='none';gameState.age++;if(gameState.age>90){alert('🎮 恭喜通关！活到了'+gameState.age+'岁！');return}generateFortune();updateUI()}
+function makeChoice(index){var choices=getChoicesByAge();if(index>=choices.length||index<0)return;var choice=choices[index];if(choice.blocked){alert('⚠️ 金钱不足，无法选择此选项！');return}if(choice.key){gameState.usedLegendaryChoices.push(choice.key)}if(choice.extra){for(var key in choice.extra){gameState.extraAttrs[key]=(gameState.extraAttrs[key]||0)+choice.extra[key]}}applyEffect(choice.effect);gameState.events.push({age:gameState.age,event:choice.text});if(checkGameOver())return;showResult(choice.result)}
+function submitFreeChoice(){var input=document.getElementById('freeInput');if(!input||!input.value.trim()){alert('请输入你的想法！');return}var text=input.value.trim();var l=text.toLowerCase();var effect={},result="";if(gameState.age<6){effect={health:3,charm:2};result="你"+text+"，开心地成长着。"}else if(gameState.age<18){effect=l.indexOf('学习')!==-1?{intelligence:3}:{health:3,charm:2};result="你"+text+"，度过了这一年。"}else if(gameState.age>=60){effect={money:3000,health:3};result="你"+text+"，享受退休生活。"}else{effect=l.indexOf('工作')!==-1?{money:3000,career:1}:l.indexOf('健身')!==-1?{health:5}:{money:1000,health:2};result="你"+text+"，开始了新的一年。"}applyEffect(effect);gameState.events.push({age:gameState.age,event:text});if(checkGameOver())return;showResult(result)}
+function updateUI(){var phase=getAgePhase(gameState.age);document.getElementById('yearDisplay').textContent='🎂 第 '+gameState.age+' 年';document.getElementById('agePhase').textContent=phase.name;document.getElementById('life').textContent=gameState.life+'/100';document.getElementById('health').textContent=gameState.health+'/100';document.getElementById('money').textContent='¥'+gameState.money.toLocaleString();document.getElementById('intelligence').textContent=gameState.intelligence+'/100';document.getElementById('charm').textContent=gameState.charm+'/100';document.getElementById('luck').textContent=gameState.luck+'/100';document.getElementById('fame').textContent=gameState.fame;document.getElementById('lifeBar').style.width=gameState.life+'%';document.getElementById('healthBar').style.width=gameState.health+'%';document.getElementById('intBar').style.width=gameState.intelligence+'%';document.getElementById('charmBar').style.width=gameState.charm+'%';document.getElementById('luckBar').style.width=gameState.luck+'%';var extraHtml='';var extraKeys=Object.keys(gameState.extraAttrs);if(extraKeys.length>0){extraKeys.forEach(function(key){var val=gameState.extraAttrs[key];var label={'关系':'💕','经验':'📚','声望':'⭐','教育':'🎓'}[key]||key;extraHtml+='<span class="extra-attr">'+label+' '+key+': <span>'+val+'</span></span>'})}document.getElementById('extraAttrs').innerHTML=extraHtml;var avatars=["👶","👶","👶","🧒","🧒","🧒","👦","👦","👦","👦","👦","👦","🧑","🧑","🧑","🧑","🧑","🧑","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👨","👴"];var names=["婴儿","婴儿","婴儿","幼儿","幼儿","幼儿","儿童","儿童","儿童","儿童","儿童","儿童","少年","少年","少年","少年","少年","少年","青年","青年","青年","青年","青年","青年","中年","中年","中年","中年","中年","中年","老年"];document.getElementById('avatar').textContent=avatars[Math.min(gameState.age,avatars.length-1)]||"👨";document.getElementById('charName').textContent=names[Math.min(gameState.age,names.length-1)]||"成人";document.getElementById('charInfo').textContent=gameState.age+'岁 · '+gameState.job;document.getElementById('skillsList').innerHTML=gameState.skills.length?gameState.skills.map(function(s){return'<span class="skill-tag">'+s+'</span>'}).join(''):'<span class="skill-tag">无</span>';document.getElementById('eventLog').innerHTML=gameState.events.slice(-5).map(function(e){return'<div>🌟 '+e.age+'岁 - '+e.event+'</div>'}).join('');var evt=getCurrentEvent();document.getElementById('sceneImage').textContent=evt.scene;document.getElementById('npcAvatar').innerHTML=evt.avatar+'<div class="speak-btn" onclick="speakText()">🔊</div>';document.getElementById('npcName').textContent=evt.npc;document.getElementById('dialogueText').textContent=evt.dialogue;var choices=getChoicesByAge();document.getElementById('choicesList').innerHTML=choices.map(function(c,i){var cls='choice-btn';if(c.legendary)cls+=' legendary';var tags='';if(c.legendary)tags+='<span class="legendary-tag">⭐ 稀有</span>';if(c.blocked)tags+='<span class="blocked-tag">🚫 金钱不足</span>';return'<button class="'+cls+'" onclick="makeChoice('+i+')" '+(c.blocked?'disabled':'')+'>'+c.text+tags+'</button>'}).join('')}generateGoal();generateFortune();document.getElementById('submitBtn').onclick=function(){submitFreeChoice()};updateUI();
 </script>
 </body>
 </html>
