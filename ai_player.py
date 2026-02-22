@@ -317,4 +317,4 @@ def main():
             print("=" * 60)
             
             # 保存日志
-            simulator.save_logs(f"ai_play_attempt_{attempt}.txt
+            simulator.save_logs("ai_play_attempt_" + str(attempt) + ".txt"

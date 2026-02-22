@@ -44,8 +44,11 @@ body{font-family:'Microsoft YaHei';background:#1a1a2e;color:#fff;padding:20px;ma
 .choice-btn:disabled{opacity:0.5;cursor:not-allowed}
 .choice-btn.legendary{background:linear-gradient(135deg,rgba(255,215,0,0.3),rgba(255,165,0,0.3));border-color:#ffd700}
 .choice-btn.legendary:hover{background:linear-gradient(135deg,rgba(255,215,0,0.5),rgba(255,165,0,0.5))}
+.choice-btn.super-legendary{background:linear-gradient(135deg,rgba(148,0,211,0.3),rgba(75,0,130,0.3));border-color:#9400d3}
+.choice-btn.super-legendary:hover{background:linear-gradient(135deg,rgba(148,0,211,0.5),rgba(75,0,130,0.5))}
 .choice-desc{font-size:11px;color:#888;margin-top:3px}
 .legendary-tag{font-size:10px;background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000;padding:2px 6px;border-radius:8px;margin-left:5px}
+.super-legendary-tag{font-size:10px;background:linear-gradient(135deg,#9400d3,#4b0082);color:#fff;padding:2px 6px;border-radius:8px;margin-left:5px}
 .blocked-tag{font-size:10px;background:#ff4444;color:#fff;padding:2px 6px;border-radius:8px;margin-left:5px}
 .free-input{margin-top:15px}
 .free-input input{width:100%;padding:10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:#fff}
@@ -71,9 +74,9 @@ body{font-family:'Microsoft YaHei';background:#1a1a2e;color:#fff;padding:20px;ma
 <div class="stat-item"><div class="stat-label">❤️ 生命</div><div class="stat-value" id="life">100</div><div class="stat-bar"><div class="stat-fill" id="lifeBar" style="width:100%;background:#ff4444"></div></div></div>
 <div class="stat-item"><div class="stat-label">💚 健康</div><div class="stat-value" id="health">100</div><div class="stat-bar"><div class="stat-fill" id="healthBar" style="width:50%;background:#00ff88"></div></div></div>
 <div class="stat-item"><div class="stat-label">💰 金钱</div><div class="stat-value" id="money">¥0</div></div>
-<div class="stat-item"><div class="stat-label">🧠 智力</div><div class="stat-value" id="intelligence">50</div><div class="stat-bar"><div class="stat-fill" id="intBar" style="width:25%;background:#00ccff"></div></div></div>
-<div class="stat-item"><div class="stat-label">✨ 魅力</div><div class="stat-value" id="charm">50</div><div class="stat-bar"><div class="stat-fill" id="charmBar" style="width:25%;background:#ff6b6b"></div></div></div>
-<div class="stat-item"><div class="stat-label">🍀 幸运</div><div class="stat-value" id="luck">50</div><div class="stat-bar"><div class="stat-fill" id="luckBar" style="width:25%;background:#ffd700"></div></div></div>
+<div class="stat-item"><div class="stat-label">🧠 智力</div><div class="stat-value" id="intelligence">50</div><div class="stat-bar"><div class="stat-fill" id="intBar" style="width:50%;background:#00ccff"></div></div></div>
+<div class="stat-item"><div class="stat-label">✨ 魅力</div><div class="stat-value" id="charm">50</div><div class="stat-bar"><div class="stat-fill" id="charmBar" style="width:50%;background:#ff6b6b"></div></div></div>
+<div class="stat-item"><div class="stat-label">🍀 幸运</div><div class="stat-value" id="luck">50</div><div class="stat-bar"><div class="stat-fill" id="luckBar" style="width:50%;background:#ffd700"></div></div></div>
 <div class="stat-item"><div class="stat-label">⭐ 声望</div><div class="stat-value" id="fame">0</div></div>
 </div>
 
@@ -143,6 +146,7 @@ function getAgePhase(age) {
     return { name: "👴 老年期", npc: "子女", scene: "🏠", avatar: "👨‍👩‍👧" };
 }
 
+// 修复经济系统：普通选项5点，稀有10点，超稀有15点
 function getChoicesByAge() {
     var age = gameState.age;
     var isAdult = age >= 18;
@@ -150,75 +154,78 @@ function getChoicesByAge() {
     
     if (age < 3) {
         choices = [
-            { text: "😊 健康成长", effect: { health: 20 }, result: "你健康成长着！", desc: "健康+20" },
-            { text: "😢 哭闹表达", effect: { charm: 10 }, result: "你用哭闹来表达需求。", desc: "魅力+10" },
-            { text: "😴 安静睡觉", effect: { health: 15 }, result: "你大部分时间在睡觉。", desc: "健康+15" },
-            { text: "👀 好奇观察", effect: { intelligence: 15, luck: 5 }, result: "你好奇地观察世界。", desc: "智力+15, 幸运+5", extra: {幸运:5} }
+            { text: "😊 健康成长", effect: { health: 5 }, result: "你健康成长着！", desc: "健康+5", value: 5 },
+            { text: "😢 哭闹表达", effect: { charm: 5 }, result: "你用哭闹来表达需求。", desc: "魅力+5", value: 5 },
+            { text: "😴 安静睡觉", effect: { health: 5 }, result: "你大部分时间在睡觉。", desc: "健康+5", value: 5 },
+            { text: "👀 好奇观察", effect: { intelligence: 3, luck: 2 }, result: "你好奇地观察世界。", desc: "智力+3, 幸运+2", value: 5, extra: {幸运:2} }
         ];
     } else if (age < 6) {
         choices = [
-            { text: "🚗 玩玩具车", effect: { intelligence: 20, skill: "机械" }, result: "你对机械玩具爱不释手！", desc: "智力+20" },
-            { text: "🎨 画画", effect: { intelligence: 15, skill: "绘画", charm: 10 }, result: "你最喜欢涂画。", desc: "智力+15, 魅力+10" },
-            { text: "👫 交小朋友", effect: { charm: 25, skill: "社交" }, result: "你交到了好朋友！", desc: "魅力+25" },
-            { text: "📖 听故事", effect: { intelligence: 20, luck: 5 }, result: "你沉浸在故事中。", desc: "智力+20, 幸运+5", extra: {幸运:5} }
+            { text: "🚗 玩玩具车", effect: { intelligence: 5 }, result: "你对机械玩具爱不释手！", desc: "智力+5", value: 5 },
+            { text: "🎨 画画", effect: { intelligence: 3, charm: 2 }, result: "你最喜欢涂画。", desc: "智力+3, 魅力+2", value: 5 },
+            { text: "👫 交小朋友", effect: { charm: 5 }, result: "你交到了好朋友！", desc: "魅力+5", value: 5 },
+            { text: "📖 听故事", effect: { intelligence: 3, luck: 2 }, result: "你沉浸在故事中。", desc: "智力+3, 幸运+2", value: 5, extra: {幸运:2} }
         ];
     } else if (age < 12) {
         choices = [
-            { text: "📐 学数学", effect: { intelligence: 30, skill: "数学" }, result: "你展现了数学天赋！", desc: "智力+30" },
-            { text: "📚 读课外书", effect: { intelligence: 25, skill: "阅读", luck: 10 }, result: "你读了很多课外书。", desc: "智力+25, 幸运+10", extra: {幸运:10} },
-            { text: "⚽ 踢足球", effect: { health: 30, skill: "足球" }, result: "你成了足球队主力！", desc: "健康+30" },
-            { text: "🎵 学钢琴", effect: { charm: 20, skill: "钢琴" }, result: "你学会了弹钢琴！", desc: "魅力+20" }
+            { text: "📐 学数学", effect: { intelligence: 5 }, result: "你展现了数学天赋！", desc: "智力+5", value: 5 },
+            { text: "📚 读课外书", effect: { intelligence: 3, luck: 2 }, result: "你读了很多课外书。", desc: "智力+3, 幸运+2", value: 5, extra: {幸运:2} },
+            { text: "⚽ 踢足球", effect: { health: 5 }, result: "你成了足球队主力！", desc: "健康+5", value: 5 },
+            { text: "🎵 学钢琴", effect: { charm: 5 }, result: "你学会了弹钢琴！", desc: "魅力+5", value: 5 }
         ];
     } else if (age < 18) {
         choices = [
-            { text: "📖 努力学习", effect: { intelligence: 30, education: 1 }, result: "你成绩优异！", desc: "智力+30, 教育+1" },
-            { text: "🏀 打篮球", effect: { health: 30, charm: 20, skill: "篮球" }, result: "你成了篮球队长！", desc: "健康+30, 魅力+20" },
-            { text: "💕 谈恋爱", effect: { relationship: 40, charm: 20 }, result: "你开始了恋情。", desc: "关系+40, 魅力+20", extra: {关系:40} },
-            { text: "🎮 玩游戏", effect: { charm: 15, intelligence: -10 }, result: "你沉迷游戏。", desc: "魅力+15, 智力-10" }
+            { text: "📖 努力学习", effect: { intelligence: 5 }, result: "你成绩优异！", desc: "智力+5", value: 5 },
+            { text: "🏀 打篮球", effect: { health: 5 }, result: "你成了篮球队长！", desc: "健康+5", value: 5 },
+            { text: "💕 谈恋爱", effect: { charm: 3, relationship: 2 }, result: "你开始了恋情。", desc: "魅力+3, 关系+2", value: 5, extra: {关系:2} },
+            { text: "🎮 玩游戏", effect: { charm: 5, intelligence: -3 }, result: "你沉迷游戏。", desc: "魅力+5, 智力-3", value: 2 }
         ];
-        if (gameState.intelligence >= 80) choices.push({ text: "🏆 参加奥赛", effect: { fame: 50, intelligence: 30, skill: "竞赛" }, result: "你获得奥赛奖牌！", desc: "声望+50, 智力+30", legendary: true, extra: {声望:50} });
-        if (gameState.charm >= 80) choices.push({ text: "🌟 成为校草", effect: { fame: 40, charm: 30 }, result: "你成了风云人物！", desc: "声望+40, 魅力+30", legendary: true, extra: {声望:40,魅力:30} });
+        // 稀有选项：智力>=60
+        if (gameState.intelligence >= 60) choices.push({ text: "🏆 参加奥赛", effect: { fame: 8, intelligence: 5 }, result: "你获得奥赛奖牌！", desc: "声望+8, 智力+5", value: 10, legendary: true, extra: {声望:8} });
     } else if (age < 22) {
         choices = [
-            { text: "📚 考研深造", effect: { intelligence: 30, education: 2 }, result: "你决定考研！", desc: "智力+30, 教育+2" },
-            { text: "💼 找实习", effect: { money: 5000, skill: "工作经验", career: 1 }, result: "你找到了实习。", desc: "¥5000, 经验+1", extra: {经验:1} },
-            { text: "🎭 参加社团", effect: { charm: 30, skill: "社交" }, result: "你认识了很多朋友！", desc: "魅力+30" },
-            { text: "🎮 打游戏", effect: { charm: 20 }, result: "你享受大学生活。", desc: "魅力+20" }
+            { text: "📚 考研深造", effect: { intelligence: 5 }, result: "你决定考研！", desc: "智力+5", value: 5 },
+            { text: "💼 找实习", effect: { money: 3000, career: 1 }, result: "你找到了实习。", desc: "¥3000, 职级+1", value: 5, extra: {经验:1} },
+            { text: "🎭 参加社团", effect: { charm: 5 }, result: "你认识了很多朋友！", desc: "魅力+5", value: 5 },
+            { text: "🎮 打游戏", effect: { charm: 5 }, result: "你享受大学生活。", desc: "魅力+5", value: 5 }
         ];
-        if (gameState.intelligence >= 100) choices.push({ text: "🚀 创业大赛", effect: { money: 50000, fame: 60, skill: "创业" }, result: "你获得创业大赛冠军！", desc: "¥50000, 声望+60", legendary: true, extra: {声望:60} });
+        // 稀有：智力>=70
+        if (gameState.intelligence >= 70) choices.push({ text: "🚀 创业大赛", effect: { money: 10000, fame: 8 }, result: "你获得创业大赛冠军！", desc: "¥10000, 声望+8", value: 10, legendary: true, extra: {声望:8} });
     } else if (age < 30) {
         choices = [
-            { text: "💪 拼命工作", effect: { money: 30000, career: 3, health: -15 }, result: "你拼命工作！", desc: "¥30000, 职级+3, 健康-15" },
-            { text: "💕 找对象", effect: { relationship: 50, charm: 20 }, result: "你找到了另一半！", desc: "关系+50, 魅力+20", extra: {关系:50} },
-            { text: "📚 继续学习", effect: { intelligence: 25, skill: "专业技能" }, result: "你考取了证书！", desc: "智力+25, 技能" },
-            { text: "🌴 享受生活", effect: { health: 20 }, result: "你好好享受生活。", desc: "健康+20" }
+            { text: "💪 拼命工作", effect: { money: 8000, career: 1, health: -3 }, result: "你拼命工作！", desc: "¥8000, 职级+1, 健康-3", value: 5 },
+            { text: "💕 找对象", effect: { relationship: 5 }, result: "你找到了另一半！", desc: "关系+5", value: 5, extra: {关系:5} },
+            { text: "📚 继续学习", effect: { intelligence: 5 }, result: "你考取了证书！", desc: "智力+5", value: 5 },
+            { text: "🌴 享受生活", effect: { health: 5 }, result: "你好好享受生活。", desc: "健康+5", value: 5 }
         ];
-        if (gameState.careerLevel >= 10) choices.push({ text: "🏢 晋升总监", effect: { money: 100000, fame: 80, career: 5 }, result: "你成功晋升总监！", desc: "¥100000, 声望+80", legendary: true, extra: {声望:80} });
+        // 稀有：关系>=30
+        if (gameState.relationship >= 30) choices.push({ text: "💍 结婚", effect: { relationship: 30, money: 5000, health: 5 }, result: "你结婚了！", desc: "关系+30, ¥5000, 健康+5", value: 10, legendary: true, extra: {关系:30} });
     } else if (age < 45) {
         choices = [
-            { text: "💼 专注事业", effect: { money: 50000, career: 3, health: -10 }, result: "你专注于事业发展。", desc: "¥50000, 职级+3" },
-            { text: "👨‍👩‍👧 结婚生子", effect: { relationship: 60, health: -5 }, result: "你组成了家庭！", desc: "关系+60", extra: {关系:60} },
-            { text: "📈 投资理财", effect: { money: Math.floor(Math.random() * 100000 - 10000), skill: "投资" }, result: "投资收益不确定。", desc: "有风险" },
-            { text: "🏃 锻炼身体", effect: { health: 40 }, result: "你坚持锻炼！", desc: "健康+40" }
+            { text: "💼 专注事业", effect: { money: 15000, career: 1, health: -3 }, result: "你专注于事业发展。", desc: "¥15000, 职级+1", value: 5 },
+            { text: "👨‍👩‍👧 结婚生子", effect: { relationship: 10 }, result: "你组成了家庭！", desc: "关系+10", value: 5, extra: {关系:10} },
+            { text: "📈 投资理财", effect: { money: Math.floor(Math.random() * 8000 - 2000) }, result: "投资收益不确定。", desc: "有风险", value: 5 },
+            { text: "🏃 锻炼身体", effect: { health: 5 }, result: "你坚持锻炼！", desc: "健康+5", value: 5 }
         ];
-        if (gameState.money >= 300000) choices.push({ text: "🏭 收购公司", effect: { money: -200000, fame: 150, career: 10 }, result: "你收购了一家公司！", desc: "¥200000, 声望+150", legendary: true, extra: {声望:150} });
+        // 稀有：金钱>=50000
+        if (gameState.money >= 50000) choices.push({ text: "🏭 创业", effect: { money: -30000, fame: 15, career: 3 }, result: "你创办了自己的公司！", desc: "¥30000, 声望+15, 职级+3", value: 10, legendary: true, extra: {声望:15} });
     } else if (age < 60) {
         choices = [
-            { text: "💼 稳定工作", effect: { money: 40000, health: -10 }, result: "你工作稳定。", desc: "¥40000, 健康-10" },
-            { text: "👨‍👩‍👧 照顾家庭", effect: { relationship: 40, health: 20 }, result: "你享受天伦之乐。", desc: "关系+40, 健康+20", extra: {关系:40} },
-            { text: "📚 继续学习", effect: { intelligence: 30, skill: "新技能" }, result: "你学习新技能。", desc: "智力+30" },
-            { text: "🏃 养生保健", effect: { health: 50 }, result: "你注重养生。", desc: "健康+50" }
+            { text: "💼 稳定工作", effect: { money: 10000, health: -2 }, result: "你工作稳定。", desc: "¥10000, 健康-2", value: 5 },
+            { text: "👨‍👩‍👧 照顾家庭", effect: { relationship: 5, health: 3 }, result: "你享受天伦之乐。", desc: "关系+5, 健康+3", value: 5, extra: {关系:5} },
+            { text: "📚 继续学习", effect: { intelligence: 5 }, result: "你学习新技能。", desc: "智力+5", value: 5 },
+            { text: "🏃 养生保健", effect: { health: 5 }, result: "你注重养生。", desc: "健康+5", value: 5 }
         ];
     } else {
         choices = [
-            { text: "✍️ 写回忆录", effect: { fame: 50, intelligence: 20 }, result: "你开始写回忆录。", desc: "声望+50, 智力+20", extra: {声望:50} },
-            { text: "👶 含饴弄孙", effect: { health: 30, relationship: 40 }, result: "你享受天伦之乐！", desc: "健康+30, 关系+40", extra: {关系:40} },
-            { text: "🌍 周游世界", effect: { charm: 50 }, result: "你去周游世界！", desc: "魅力+50" },
-            { text: "🌱 种花养草", effect: { health: 40, luck: 20 }, result: "你过起悠闲生活。", desc: "健康+40, 幸运+20", extra: {幸运:20} }
+            { text: "✍️ 写回忆录", effect: { fame: 5, intelligence: 3 }, result: "你开始写回忆录。", desc: "声望+5, 智力+3", value: 5, extra: {声望:5} },
+            { text: "👶 含饴弄孙", effect: { health: 5, relationship: 5 }, result: "你享受天伦之乐！", desc: "健康+5, 关系+5", value: 5, extra: {关系:5} },
+            { text: "🌍 周游世界", effect: { charm: 5 }, result: "你去周游世界！", desc: "魅力+5", value: 5 },
+            { text: "🌱 种花养草", effect: { health: 5, luck: 3 }, result: "你过起悠闲生活。", desc: "健康+5, 幸运+3", value: 5, extra: {幸运:3} }
         ];
     }
     
-    // 过滤金钱为负的选项（未成年）或会导致金钱为负的选项
+    // 过滤金钱为负的选项（未成年）
     choices = choices.filter(function(c) {
         if (!isAdult && c.effect.money && c.effect.money < 0) return false;
         return true;
@@ -275,13 +282,12 @@ function applyEffect(effect) {
     if (effect.job) gameState.job = effect.job;
     if (effect.skill && gameState.skills.indexOf(effect.skill) === -1) gameState.skills.push(effect.skill);
     
-    // 金钱不能为负
     gameState.money = Math.max(0, gameState.money);
     gameState.life = Math.max(0, Math.min(100, gameState.life));
-    gameState.health = Math.max(0, Math.min(200, gameState.health));
-    gameState.intelligence = Math.max(0, Math.min(200, gameState.intelligence));
-    gameState.charm = Math.max(0, Math.min(200, gameState.charm));
-    gameState.luck = Math.max(0, Math.min(200, gameState.luck));
+    gameState.health = Math.max(0, Math.min(100, gameState.health));
+    gameState.intelligence = Math.max(0, Math.min(100, gameState.intelligence));
+    gameState.charm = Math.max(0, Math.min(100, gameState.charm));
+    gameState.luck = Math.max(0, Math.min(100, gameState.luck));
 }
 
 function checkGameOver() {
@@ -299,7 +305,6 @@ function makeChoice(index) {
         return;
     }
     
-    // 收集额外属性
     if (choice.extra) {
         for (var key in choice.extra) {
             gameState.extraAttrs[key] = (gameState.extraAttrs[key] || 0) + choice.extra[key];
@@ -322,9 +327,9 @@ function submitFreeChoice() {
     var l = text.toLowerCase();
     var effect = {}, result = "";
     
-    if (gameState.age < 6) effect = { health: 10, charm: 5 };
-    else if (gameState.age < 18) effect = l.indexOf('学习') !== -1 ? { intelligence: 20 } : { health: 15, charm: 10 };
-    else effect = l.indexOf('工作') !== -1 ? { money: 10000, career: 1, health: -5 } : l.indexOf('健身') !== -1 ? { health: 30 } : { money: 5000, health: 10 };
+    if (gameState.age < 6) effect = { health: 3, charm: 2 };
+    else if (gameState.age < 18) effect = l.indexOf('学习') !== -1 ? { intelligence: 3 } : { health: 3, charm: 2 };
+    else effect = l.indexOf('工作') !== -1 ? { money: 3000, career: 1 } : l.indexOf('健身') !== -1 ? { health: 5 } : { money: 1000, health: 2 };
     
     applyEffect(effect);
     gameState.events.push({ age: gameState.age, event: text });
@@ -340,20 +345,19 @@ function updateUI() {
     document.getElementById('yearDisplay').textContent = '🎂 第 ' + gameState.age + ' 年';
     document.getElementById('agePhase').textContent = phase.name;
     document.getElementById('life').textContent = gameState.life + '/100';
-    document.getElementById('health').textContent = gameState.health + '/200';
+    document.getElementById('health').textContent = gameState.health + '/100';
     document.getElementById('money').textContent = '¥' + gameState.money.toLocaleString();
-    document.getElementById('intelligence').textContent = gameState.intelligence + '/200';
-    document.getElementById('charm').textContent = gameState.charm + '/200';
-    document.getElementById('luck').textContent = gameState.luck + '/200';
+    document.getElementById('intelligence').textContent = gameState.intelligence + '/100';
+    document.getElementById('charm').textContent = gameState.charm + '/100';
+    document.getElementById('luck').textContent = gameState.luck + '/100';
     document.getElementById('fame').textContent = gameState.fame;
     
     document.getElementById('lifeBar').style.width = gameState.life + '%';
-    document.getElementById('healthBar').style.width = (gameState.health / 2) + '%';
-    document.getElementById('intBar').style.width = (gameState.intelligence / 2) + '%';
-    document.getElementById('charmBar').style.width = (gameState.charm / 2) + '%';
-    document.getElementById('luckBar').style.width = (gameState.luck / 2) + '%';
+    document.getElementById('healthBar').style.width = gameState.health + '%';
+    document.getElementById('intBar').style.width = gameState.intelligence + '%';
+    document.getElementById('charmBar').style.width = gameState.charm + '%';
+    document.getElementById('luckBar').style.width = gameState.luck + '%';
     
-    // 更新动态属性面板
     var extraHtml = '';
     var extraKeys = Object.keys(gameState.extraAttrs);
     if (extraKeys.length > 0) {
@@ -384,9 +388,11 @@ function updateUI() {
     document.getElementById('choicesList').innerHTML = choices.map(function(c, i) {
         var cls = 'choice-btn';
         if (c.legendary) cls += ' legendary';
+        if (c.superLegendary) cls += ' super-legendary';
         if (c.blocked) cls += ' blocked';
         var tags = '';
         if (c.legendary) tags += '<span class="legendary-tag">⭐ 稀有</span>';
+        if (c.superLegendary) tags += '<span class="super-legendary-tag">💜 超稀有</span>';
         if (c.blocked) tags += '<span class="blocked-tag">🚫 金钱不足</span>';
         return '<button class="' + cls + '" onclick="makeChoice(' + i + ')" ' + (c.blocked ? 'disabled' : '') + '>' + c.text + tags + '<div class="choice-desc">' + c.desc + '</div></button>';
     }).join('');
